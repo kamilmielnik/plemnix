@@ -5,8 +5,8 @@ const server = new WebSocketServer({
   port: PORT
 });
 
-server.on('connection', function connection(websocket) {
-  websocket.on('message', function incoming(message) {
+server.on('connection', websocket => {
+  websocket.on('message', message => {
     console.log('received: %s', message);
   });
 

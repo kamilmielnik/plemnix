@@ -10,4 +10,4 @@ export default function Message({ type, timestamp, payload }) {
   };
 }
 
-Message.deserialize = (stringified) => new Message(JSON.parse(stringified));
+Message.deserialize = stringified => new Message(JSON.parse(stringified));

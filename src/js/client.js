@@ -36,7 +36,7 @@ function main() {
     () => {
 
     },
-    (message) => {
+    message => {
       console.log('message', message);
     }
   );
@@ -64,8 +64,8 @@ function createSnake(keysListener) {
 function connect(onOpen, onMessage) {
   const connection = new WebSocket(`ws://${SERVER_URL}:${SERVER_PORT}`, 'multiplayer-snake');
   connection.onopen = onOpen;
-  connection.onerror = (error) => console.log('onerror' + error);
-  connection.onmessage = (message) => {
+  connection.onerror = error => console.log(`onerror${error}`);
+  connection.onmessage = message => {
     try {
       const json = JSON.parse(message.data);
       onMessage(json);
