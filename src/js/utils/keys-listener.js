@@ -25,3 +25,9 @@ export default function KeysListener() {
     keys[key] = false;
   }
 }
+
+KeysListener.nullKeysListener = {
+  isPressed: () => false,
+  attach: () => undefined,
+  detach: () => undefined
+};

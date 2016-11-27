@@ -1,8 +1,8 @@
-import { getRandomColor } from 'utils';
+import { getRandomColor, KeysListener } from 'utils';
 import { INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE } from 'constants';
 import { Point } from 'model';
 
-export default function Snake({ id, keysListener, points, color }) {
+export default function Snake({ id, keysListener = KeysListener.nullKeysListener, points, color }) {
   let direction = 0;
 
   return {
