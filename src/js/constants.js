@@ -8,6 +8,9 @@ export const SNAKE_MOVE_TIME = 1000 / 60;
 /* server-specific */
 
 /* client-specific */
+export const SERVER_URL = '127.0.0.1';
+export const SERVER_PORT = 8080;
+
 export const CANVAS_ID = 'game';
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;

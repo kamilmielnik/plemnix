@@ -18,7 +18,11 @@ const sassLoaders = [
 module.exports = {
   env: process.env.NODE_ENV,
   entry: {
-    app: path.resolve(PATHS.app, 'main.js')
+    app: path.resolve(PATHS.app, 'client.js')
+  },
+  node: {
+    fs: 'empty',
+    tls: 'empty'
   },
   output: {
     path: PATHS.build,

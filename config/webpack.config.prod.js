@@ -18,15 +18,7 @@ const sassLoaders = [
   'sass-loader?outputStyle=compressed'
 ];
 
-module.exports = {
-  entry: {
-    app: path.resolve(PATHS.app, 'main.js')
-  },
-  output: {
-    path: PATHS.build,
-    filename: 'js/[name].js',
-    publicPath: '/'
-  },
+const commonConfig = {
   stats: {
     colors: true
   },
@@ -92,3 +84,25 @@ module.exports = {
   ],
   devtool: 'source-map'
 };
+
+module.exports = [
+  Object.assign({}, commonConfig, {
+    name: 'client',
+    entry: path.resolve(PATHS.app, 'client.js'),
+    target: 'web',
+    output: {
+      path: PATHS.build,
+      filename: 'js/client.js',
+      publicPath: '/'
+    }
+  }),
+  Object.assign({}, commonConfig, {
+    name: 'server',
+    entry: path.resolve(PATHS.app, 'server.js'),
+    target: 'node',
+    output: {
+      path: PATHS.build,
+      filename: 'js/server.js'
+    }
+  })
+];

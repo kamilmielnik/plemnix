@@ -10,12 +10,14 @@
     "build:html": "node ./bin/buildHtml.js",
     "prestart": "node ./bin/clean.js",
     "start": "webpack-dev-server --config ./config/webpack.config.dev.js --hot --inline --progress",
+    "start:server": "node ./build/js/server.js",
     "prebuild": "npm run clean:build && npm run build:html",
     "build": "SET NODE_ENV=production& npm run prebuild && webpack -p --config ./config/webpack.config.prod.js --progress",
     "lint": "eslint config src/js --ext .js --fix"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
+    "babel-cli": "6.18.0",
     "babel-core": "6.14.0",
     "babel-eslint": "6.1.0",
     "babel-loader": "6.2.5",
@@ -32,7 +34,7 @@
     "jquery": "3.1.0",
     "jsdom": "8.2.0",
     "json-loader": "0.5.4",
-    "node-sass": "3.10.0",
+    "node-sass": "3.13.0",
     "postcss-loader": "0.13.0",
     "rimraf": "2.5.4",
     "sass-loader": "4.0.2",
@@ -44,6 +46,7 @@
   "dependencies": {
     "babel-polyfill": "6.13.0",
     "fastclick": "^1.0.6",
-    "node-normalize-scss": "^1.3.2"
+    "node-normalize-scss": "^1.3.2",
+    "ws": "1.1.1"
   }
 }

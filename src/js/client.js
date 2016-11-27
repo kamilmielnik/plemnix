@@ -3,7 +3,14 @@ import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
 import FastClick from 'fastclick';
 import { KeysListener } from 'utils';
-import { CANVAS_ID, CANVAS_HEIGHT, CANVAS_WIDTH, SNAKE_MOVE_TIME } from 'constants';
+import {
+  CANVAS_ID,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  SNAKE_MOVE_TIME,
+  SERVER_URL,
+  SERVER_PORT
+} from 'constants';
 import { CanvasView, SnakeView } from 'view';
 import { Point, Snake } from 'model';
 
@@ -22,8 +29,17 @@ function main() {
   setInterval(run, SNAKE_MOVE_TIME);
 
   function run() {
-    snake.move();
+    snake.step();
   }
+
+  connect(
+    () => {
+
+    },
+    (message) => {
+      console.log('message', message);
+    }
+  );
 }
 
 function createCanvasView() {
@@ -43,4 +59,18 @@ function createSnake(keysListener) {
       y: 100
     })
   });
+}
+
+function connect(onOpen, onMessage) {
+  const connection = new WebSocket(`ws://${SERVER_URL}:${SERVER_PORT}`, 'multiplayer-snake');
+  connection.onopen = onOpen;
+  connection.onerror = (error) => console.log('onerror' + error);
+  connection.onmessage = (message) => {
+    try {
+      const json = JSON.parse(message.data);
+      onMessage(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }

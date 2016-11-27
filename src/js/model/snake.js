@@ -28,7 +28,7 @@ export default function Snake({ id, keysListener = KeysListener.nullKeysListener
       points.push(newHead);
     },
 
-    move() {
+    step() {
       handleKeyboardInput();
       const head = points[points.length - 1];
       const newHead = getNextPoint(head, direction);
