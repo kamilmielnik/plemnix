@@ -102,7 +102,8 @@ module.exports = [
     target: 'node',
     output: {
       path: PATHS.build,
-      filename: 'js/server.js'
+      filename: 'js/server.js',
+      publicPath: '/'
     }
   })
 ];
