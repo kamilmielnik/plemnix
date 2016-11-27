@@ -225,7 +225,7 @@ module.exports = {
     'no-continue': 'error',
     'no-inline-comments': 'error',
     'no-lonely-if': 'error',
-    'no-mixed-operators': 'error',
+    'no-mixed-operators': 'off',
     'no-mixed-spaces-and-tabs': 'error',
     'no-multiple-empty-lines': 'error',
     'no-negated-condition': 'error',

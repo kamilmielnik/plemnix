@@ -1,7 +1,8 @@
 /* common */
 export const ENABLE_EDGE_COLLISION = true;
-export const INITIAL_SNAKE_LENGTH = 10;
-export const SNAKE_STEP_LENGTH = 3;
+export const INITIAL_SNAKE_LENGTH = 50;
+export const SNAKE_STEP_LENGTH = 2;
+export const SNAKE_TURN_ANGLE = 0.08;
 export const SNAKE_MOVE_TIME = 1000 / 60;
 
 /* server-specific */

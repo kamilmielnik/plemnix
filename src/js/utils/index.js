@@ -1,2 +1,2 @@
-export CommandListener from './command-listener';
+export KeysListener from './keys-listener';
 export getRandomColor from './get-random-color';

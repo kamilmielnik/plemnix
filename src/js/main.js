@@ -2,8 +2,8 @@ import 'babel-polyfill';
 import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
 import FastClick from 'fastclick';
-import { CommandListener } from 'utils';
-import { CANVAS_ID, CANVAS_HEIGHT, CANVAS_WIDTH } from 'constants';
+import { KeysListener } from 'utils';
+import { CANVAS_ID, CANVAS_HEIGHT, CANVAS_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { CanvasView, SnakeView } from 'view';
 import { Point, Snake } from 'model';
 
@@ -11,18 +11,15 @@ FastClick.attach(document.body);
 main();
 
 function main() {
-  const snake = createSnake();
+  const keysListener = new KeysListener();
+  keysListener.attach();
+  const snake = createSnake(keysListener);
   const snakeView = new SnakeView(snake);
   const canvasView = createCanvasView();
   canvasView.addView(snakeView);
   canvasView.paint();
 
-  const leftKeyListener = createLeftKeyListener();
-  const rightKeyListener = createRightKeyListener();
-  leftKeyListener.attach();
-  rightKeyListener.attach();
-
-  setInterval(run, 10);
+  setInterval(run, SNAKE_MOVE_TIME);
 
   function run() {
     snake.move();
@@ -37,24 +34,13 @@ function createCanvasView() {
   });
 }
 
-function createSnake() {
+function createSnake(keysListener) {
   return Snake.create({
     id: 'kamil',
+    keysListener,
     start: new Point({
       x: 100,
       y: 100
     })
-  });
-}
-
-function createLeftKeyListener() {
-  return new CommandListener('ArrowLeft', () => {
-    console.log('Left pressed');
-  });
-}
-
-function createRightKeyListener() {
-  return new CommandListener('ArrowRight', () => {
-    console.log('Right pressed');
   });
 }
