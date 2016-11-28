@@ -1,15 +1,8 @@
-import { getRandomColor, KeysListener } from 'utils';
+import { getRandomColor, PressedKeysListener } from 'utils';
 import { INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE } from 'constants';
-import { Point } from 'model';
 
-export default function Snake({ id, keysListener = KeysListener.nullKeysListener, points, color }) {
-  let direction = 0;
-
+export default function Snake({ points, direction = 0, color }) {
   return {
-    get id() {
-      return id;
-    },
-
     get color() {
       return color;
     },
@@ -29,48 +22,49 @@ export default function Snake({ id, keysListener = KeysListener.nullKeysListener
     },
 
     step() {
-      handleKeyboardInput();
       const head = points[points.length - 1];
       const newHead = getNextPoint(head, direction);
       points.splice(0, 1);
       points.push(newHead);
+    },
+
+    turnLeft() {
+      direction += SNAKE_TURN_ANGLE;
+    },
+
+    turnRight() {
+      direction -= SNAKE_TURN_ANGLE;
+    },
+
+    fromJSON(json) {
+      points = json.points;
+      color = json.color;
+    },
+
+    toJSON() {
+      return {
+        points,
+        color
+      };
     }
   };
-
-  function handleKeyboardInput() {
-    if(keysListener.isPressed('ArrowLeft')) {
-      turnLeft();
-    } else if(keysListener.isPressed('ArrowRight')) {
-      turnRight();
-    }
-  }
-
-  function turnLeft() {
-    direction += SNAKE_TURN_ANGLE;
-  }
-
-  function turnRight() {
-    direction -= SNAKE_TURN_ANGLE;
-  }
 }
 
-Snake.create = ({ id, keysListener, start }) => {
+Snake.create = ({ start }) => {
   const points = [start];
   const color = getRandomColor();
+  const direction = 0;
 
   for (let i = 1; i < INITIAL_SNAKE_LENGTH; ++i) {
-    points.push(new Point({
-      x: start.x + SNAKE_STEP_LENGTH * i,
-      y: start.y
-    }));
+    points.push(getNextPoint(start, direction));
   }
 
-  return new Snake({ id, keysListener, points, color });
+  return new Snake({ points, direction, color });
 };
 
 function getNextPoint(point, direction) {
-  return new Point({
+  return {
     x: point.x + Math.cos(direction) * SNAKE_STEP_LENGTH,
     y: point.y - Math.sin(direction) * SNAKE_STEP_LENGTH
-  });
+  };
 }

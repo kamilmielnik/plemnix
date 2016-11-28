@@ -1,9 +1,5 @@
-export default function KeysListener() {
-  const keys = {};
-
+export default function KeysListener({ onKeyDown, onKeyUp }) {
   return {
-    isPressed: key => Boolean(keys[key]),
-
     attach() {
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('keyup', onKeyUp);
@@ -14,20 +10,4 @@ export default function KeysListener() {
       window.removeEventListener('keyup', onKeyUp);
     }
   };
-
-  function onKeyDown(event) {
-    const { key } = event;
-    keys[key] = true;
-  }
-
-  function onKeyUp(event) {
-    const { key } = event;
-    keys[key] = false;
-  }
 }
-
-KeysListener.nullKeysListener = {
-  isPressed: () => false,
-  attach: () => undefined,
-  detach: () => undefined
-};

@@ -7,39 +7,37 @@ import {
   CANVAS_ID,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
-  SNAKE_MOVE_TIME,
-  SERVER_URL,
-  SERVER_PORT
+  SNAKE_MOVE_TIME
 } from 'constants';
-import { CanvasView, SnakeView } from 'view';
-import { Point, Snake } from 'model';
+import { CanvasView, GameView } from 'view';
+import { Game, Snake } from 'model';
+import ApiClient from 'api/client';
+import { MESSAGE_STATE_UPDATED } from 'api';
 
 FastClick.attach(document.body);
 main();
 
 function main() {
-  const keysListener = new KeysListener();
-  keysListener.attach();
-  const snake = createSnake(keysListener);
-  const snakeView = new SnakeView(snake);
+  const game = new Game();
+  const gameView = new GameView(game);
   const canvasView = createCanvasView();
-  canvasView.addView(snakeView);
+  canvasView.addView(gameView);
   canvasView.paint();
 
-  setInterval(run, SNAKE_MOVE_TIME);
-
-  function run() {
-    snake.step();
-  }
-
-  connect(
-    () => {
-      console.log('connection opened');
-    },
-    message => {
-      console.log('message', message);
+  const apiClient = new ApiClient({
+    onOpen: () => apiClient.signIn('kamil'),
+    customHandlers: {
+      [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
+        game.fromJSON(state);
+      }
     }
-  );
+  });
+
+  const keysListener = new KeysListener({
+    onKeyDown: ({ key }) => apiClient.pressKey(key),
+    onKeyUp: ({ key }) => apiClient.releaseKey(key)
+  });
+  keysListener.attach();
 }
 
 function createCanvasView() {
@@ -48,29 +46,4 @@ function createCanvasView() {
     height: CANVAS_HEIGHT,
     width: CANVAS_WIDTH
   });
-}
-
-function createSnake(keysListener) {
-  return Snake.create({
-    id: 'kamil',
-    keysListener,
-    start: new Point({
-      x: 100,
-      y: 100
-    })
-  });
-}
-
-function connect(onOpen, onMessage) {
-  const connection = new WebSocket(`ws://${SERVER_URL}:${SERVER_PORT}`, null);
-  connection.onopen = onOpen;
-  connection.onerror = error => console.log('Error: ', error);
-  connection.onmessage = message => {
-    try {
-      const json = JSON.parse(message.data);
-      onMessage(json);
-    } catch (error) {
-      console.log('JSON parsing error: ', error);
-    }
-  };
 }

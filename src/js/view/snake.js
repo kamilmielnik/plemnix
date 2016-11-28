@@ -2,7 +2,7 @@ import { SNAKE_WIDTH } from 'constants';
 
 export default function SnakeView(snake) {
   return {
-    paint: context => {
+    paint: (context) => {
       const color = snake.color;
       const points = snake.points;
       const [firstPoint, ...restOfPoints] = points;
