@@ -8,6 +8,10 @@ export default function Game() {
       players[token] = player;
     },
 
+    deletePlayer(token) {
+      delete players[token];
+    },
+
     pressKey(token, key) {
       const player = players[token];
       player.pressedKeys.press(key);
@@ -48,7 +52,9 @@ export default function Game() {
         players[token].fromJSON(json[token]);
       });
       newPlayers.forEach((token) => {
-        updatedPlayers[token] = new Player(json[token].name);
+        updatedPlayers[token] = new Player({
+          name: json[token].name
+        });
         updatedPlayers[token].fromJSON(json[token]);
       });
 
@@ -56,10 +62,10 @@ export default function Game() {
     },
 
     toJSON() {
-      return Object.keys(players).reduce((json, key) => {
-        json[key] = players[key].toJSON();
-        return json;
-      }, {});
+      return Object.keys(players).reduce((json, key) => ({
+        ...json,
+        [key]: players[key].toJSON()
+      }), {});
     }
   };
 }

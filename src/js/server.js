@@ -1,20 +1,31 @@
 import { Server as WebSocketServer } from 'ws';
 import http from 'http';
-import { SERVER_PORT, SNAKE_MOVE_TIME } from './constants';
+import { CONNECTION_ESTABLISHED, SERVER_PORT, SNAKE_MOVE_TIME, SYNC_TIME } from './constants';
 import {
   Message,
   MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
   MESSAGE_STATE_UPDATED
 } from './api';
-import { Game, Player } from './model';
+import { Game, Player, Snake } from './model';
 
 const game = new Game();
 const handlers = {
   [MESSAGE_SIGN_IN]: (socket, _, { name }) => {
-    const player = new Player(name, socket);
+    const player = new Player({
+      name,
+      snake: createDefaultSnake(),
+      socket
+    });
     const { token } = player;
     game.addPlayer(token, player);
+    socket.on('close', (args) => {
+      console.log('closing connection', token, args);
+      game.deletePlayer(token);
+    });
+    socket.on('error', (args) => {
+      console.log('connection error', token, args);
+    });
     socket.send(createSignInResponseMessage(token).serialize());
   },
 
@@ -28,7 +39,7 @@ const handlers = {
 };
 
 const { server, wsServer } = createServers();
-server.listen(SERVER_PORT, () => console.log(`HTTP server started at ${SERVER_PORT}`));
+server.listen(SERVER_PORT, () => console.log(`HTTP server started at http://localhost:${SERVER_PORT}/`));
 wsServer.on('connection', (socket) => {
   socket.on('message', (message) => {
     try {
@@ -45,12 +56,17 @@ wsServer.on('connection', (socket) => {
   });
 });
 
+setInterval(() => game.step(), SNAKE_MOVE_TIME);
+
 setInterval(() => {
-  game.step();
   const gameJSON = game.toJSON();
   const message = createStateUpdatedMessage(gameJSON);
-  game.forEachPlayer(({ socket }) => socket.send(message.serialize()));
-}, SNAKE_MOVE_TIME);
+  game.forEachPlayer(({ socket }) => {
+    if (socket.readyState === CONNECTION_ESTABLISHED) {
+      socket.send(message.serialize())
+    }
+  });
+}, SYNC_TIME);
 
 function createServers() {
   const server = http.createServer();
@@ -74,6 +90,15 @@ function createStateUpdatedMessage(state) {
     type: MESSAGE_STATE_UPDATED,
     payload: {
       state
+    }
+  });
+}
+
+function createDefaultSnake() {
+  return Snake.create({
+    start: {
+      x: 100,
+      y: 100
     }
   });
 }

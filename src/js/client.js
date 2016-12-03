@@ -24,6 +24,8 @@ function main() {
   canvasView.addView(gameView);
   canvasView.paint();
 
+  setInterval(() => game.step(), SNAKE_MOVE_TIME);
+
   const apiClient = new ApiClient({
     onOpen: () => apiClient.signIn('kamil'),
     customHandlers: {

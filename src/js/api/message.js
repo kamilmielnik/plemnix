@@ -1,8 +1,9 @@
-export default function Message({ type, /*timestamp, */payload }) {
+export default function Message({ type, token, /*timestamp, */payload }) {
   return {
     serialize() {
       return JSON.stringify({
         type,
+        token,
         /*timestamp,*/
         payload
       });

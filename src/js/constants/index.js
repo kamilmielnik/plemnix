@@ -8,6 +8,8 @@ export const SNAKE_TURN_ANGLE = 0.08;
 export const SNAKE_MOVE_TIME = 1000 / 60;
 
 /* server-specific */
+export const CONNECTION_ESTABLISHED = 1;
+export const SYNC_TIME = 1000 / 10;
 
 /* client-specific */
 export const CANVAS_ID = 'game';

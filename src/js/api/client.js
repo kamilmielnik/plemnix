@@ -1,4 +1,4 @@
-import { SERVER_URL, SERVER_PORT } from 'constants';
+import { SERVER_URL, SERVER_PORT } from '../constants';
 import { MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED, MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE } from './types';
 import Message from './message';
 

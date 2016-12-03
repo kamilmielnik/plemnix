@@ -6,7 +6,7 @@ export default function GameView(game) {
       game.forEachPlayer((player) => {
         const { snake } = player;
         const snakeView = new SnakeView(snake);
-        snakeView.paint(context)
+        snakeView.paint(context);
       });
     }
   };

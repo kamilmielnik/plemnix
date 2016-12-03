@@ -1,7 +1,7 @@
 import { getRandomColor, PressedKeysListener } from 'utils';
-import { INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE } from 'constants';
+import { INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE } from '../constants';
 
-export default function Snake({ points, direction = 0, color }) {
+export default function Snake({ color, direction = 0, points = [] } = {}) {
   return {
     get color() {
       return color;
@@ -37,13 +37,15 @@ export default function Snake({ points, direction = 0, color }) {
     },
 
     fromJSON(json) {
-      points = json.points;
       color = json.color;
+      direction = json.direction;
+      points = json.points;
     },
 
     toJSON() {
       return {
         points,
+        direction,
         color
       };
     }

@@ -1,14 +1,8 @@
 import { generateToken, PressedKeysListener } from 'utils';
 import { Snake } from 'model';
 
-export default function Player(name, socket) {
+export default function Player({ name, snake = new Snake(), socket }) {
   const token = generateToken();
-  const snake = Snake.create({
-    start: {
-      x: 100,
-      y: 100
-    }
-  });
 
   return {
     get name() {
