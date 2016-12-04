@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import { Server as WebSocketServer } from 'ws';
 import http from 'http';
 import { CONNECTION_ESTABLISHED, SERVER_PORT, SNAKE_MOVE_TIME, SYNC_TIME } from './constants';

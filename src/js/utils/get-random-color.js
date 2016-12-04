@@ -1,10 +1,17 @@
 const colors = [
-  '#99b433', '#00a300', '#1e7145', '#ff0097', '#9f00a7', '#7e3878', '#603cba',
-  '#1d1d1d', '#00aba9', '#eff4ff', '#2d89ef', '#2b5797', '#ffc40d', '#e3a21a',
-  '#da532c', '#ee1111', '#b91d47'
+  '#1e7145', '#ff0097', '#9f00a7', '#603cba', '#1d1d1d', '#00aba9', '#2d89ef', '#ffc40d', '#ee1111'
 ];
 
+const generator = getColor();
+
 export default function getRandomColor() {
-  const colorIndex = Math.ceil(Math.random() * colors.length);
-  return colors[colorIndex];
+  return generator.next().value;
+}
+
+function* getColor() {
+  let index = 0;
+
+  while(true) {
+    yield colors[index++ % colors.length];
+  }
 }

@@ -18,5 +18,5 @@ export const SYNC_TIME = 1000 / 10;
 
 /* client-specific */
 export const CANVAS_ID = 'game';
-export const FRUIT_COLOR = '#ff0000';
+export const FRUIT_COLOR = '#6acc1c';
 export const SNAKE_WIDTH = 1;

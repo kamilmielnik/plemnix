@@ -1,4 +1,3 @@
-import { FRUIT_COLOR } from 'constants';
 import { Fruit, Player } from 'model';
 
 export default function Game() {
