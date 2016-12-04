@@ -77,9 +77,7 @@ export default function Game() {
 
     Object.values(players).forEach(player => {
       const { snake } = player;
-      const { points } = snake;
-      const head = points[points.length - 1] || {};
-      if(fruit.isPointInRange(head)) {
+      if(fruit.collidesWithSnakeHead(snake)) {
         snake.eatFruit(fruit);
         fruit.hasBeenEaten = true;
       }

@@ -1,8 +1,8 @@
-import { SNAKE_STEP_LENGTH, SNAKE_WIDTH } from 'constants';
+import { SNAKE_HEAD_RADIUS, SNAKE_STEP_LENGTH, SNAKE_WIDTH } from 'constants';
 
 export default function SnakeView(snake) {
   return {
-    paint: context => {
+    paint(context) {
       const { color, points } = snake;
       const [firstPoint, ...restOfPoints] = points;
       context.beginPath();
@@ -18,8 +18,19 @@ export default function SnakeView(snake) {
         }
       });
       context.stroke();
+      paintHead(context, snake);
     }
   };
+
+  function paintHead(context, snake) {
+    const { color, head } = snake;
+    context.beginPath();
+    context.strokeStyle = color;
+    context.ellipse(head.x, head.y, SNAKE_HEAD_RADIUS, SNAKE_HEAD_RADIUS, 0, 0, 2 * Math.PI);
+    context.fillStyle = color;
+    context.fill();
+    context.stroke();
+  }
 }
 
 function lineCrossesBounds(start, end) {

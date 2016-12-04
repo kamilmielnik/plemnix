@@ -14,6 +14,10 @@ export default function Snake({ color, direction = 0, points = [], pointsToAdd =
       return direction;
     },
 
+    get head() {
+      return points[points.length - 1];
+    },
+
     get points() {
       return [...points];
     },

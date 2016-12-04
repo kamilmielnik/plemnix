@@ -2,7 +2,7 @@ import { FRUIT_RADIUS } from 'constants';
 
 export default function FruitView(fruit) {
   return {
-    paint: context => {
+    paint(context) {
       if(fruit.hasBeenEaten) {
         return;
       }

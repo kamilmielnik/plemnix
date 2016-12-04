@@ -1,4 +1,6 @@
-import { FIELD_WIDTH, FIELD_HEIGHT, FRUIT_COLOR, FRUIT_RADIUS } from '../constants';
+import { FIELD_WIDTH, FIELD_HEIGHT, FRUIT_COLOR, FRUIT_RADIUS, SNAKE_HEAD_RADIUS } from '../constants';
+
+const MAX_FRUIT_SNAKE_DISTANCE = (FRUIT_RADIUS + SNAKE_HEAD_RADIUS)*(FRUIT_RADIUS + SNAKE_HEAD_RADIUS);
 
 export default function Fruit({ color, point, hasBeenEaten }) {
   return {
@@ -18,10 +20,12 @@ export default function Fruit({ color, point, hasBeenEaten }) {
       return point;
     },
 
-    isPointInRange(otherPoint) {
-      const xDifference = otherPoint.x - point.x;
-      const yDifference = otherPoint.y - point.y;
-      return xDifference * xDifference + yDifference * yDifference < FRUIT_RADIUS * FRUIT_RADIUS;
+    collidesWithSnakeHead(snake) {
+      const { head } = snake;
+      const xDifference = head.x - point.x;
+      const yDifference = head.y - point.y;
+
+      return xDifference * xDifference + yDifference * yDifference < MAX_FRUIT_SNAKE_DISTANCE;
     },
 
     revive() {
