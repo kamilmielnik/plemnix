@@ -1,20 +1,13 @@
 import 'babel-polyfill';
 import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
-import FastClick from 'fastclick';
+import { CANVAS_ID, CANVAS_HEIGHT, CANVAS_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { KeysListener } from 'utils';
-import {
-  CANVAS_ID,
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  SNAKE_MOVE_TIME
-} from 'constants';
-import { CanvasView, GameView } from 'view';
-import { Game, Snake } from 'model';
-import ApiClient from 'api/client';
 import { MESSAGE_STATE_UPDATED } from 'api';
+import ApiClient from 'api/client';
+import { Game, Snake } from 'model';
+import { CanvasView, GameView } from 'view';
 
-FastClick.attach(document.body);
 main();
 
 function main() {

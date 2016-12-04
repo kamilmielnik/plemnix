@@ -1,4 +1,4 @@
-import { getRandomColor, PressedKeysListener } from 'utils';
+import { getRandomColor, PressedKeys } from 'utils';
 import { INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE } from '../constants';
 
 export default function Snake({ color, direction = 0, points = [] } = {}) {

@@ -1,9 +1,13 @@
-import { generateToken, PressedKeysListener } from 'utils';
+import { generateToken, PressedKeys } from 'utils';
 import { Snake } from 'model';
 
-export default function Player({ name, snake = new Snake(), socket }) {
-  const token = generateToken();
-
+export default function Player({
+  name,
+  pressedKeys = new PressedKeys(),
+  snake = new Snake(),
+  socket,
+  token = generateToken()
+}) {
   return {
     get name() {
       return name;
@@ -13,18 +17,28 @@ export default function Player({ name, snake = new Snake(), socket }) {
       return snake;
     },
 
-    token,
-    pressedKeys: new PressedKeysListener(),
-    socket,
+    get pressedKeys() {
+      return pressedKeys;
+    },
+
+    get socket() {
+      return socket;
+    },
+
+    get token() {
+      return token;
+    },
 
     fromJSON(json) {
       name = json.name;
+      pressedKeys.fromJSON(json.pressedKeys);
       snake.fromJSON(json.snake);
     },
 
     toJSON() {
       return {
         name,
+        pressedKeys: pressedKeys.toJSON(),
         snake: snake.toJSON()
       };
     }
