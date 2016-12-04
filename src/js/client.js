@@ -17,13 +17,15 @@ function main() {
   canvasView.addView(gameView);
   canvasView.paint();
 
-  setInterval(() => game.step(), SNAKE_MOVE_TIME);
+  let updateGameInterval = setInterval(() => game.step(), SNAKE_MOVE_TIME);
 
   const apiClient = new ApiClient({
     onOpen: () => apiClient.signIn('kamil'),
     customHandlers: {
       [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
+        clearInterval(updateGameInterval);
         game.fromJSON(state);
+        updateGameInterval = setInterval(() => game.step(), SNAKE_MOVE_TIME);
       }
     }
   });
