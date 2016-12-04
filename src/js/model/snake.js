@@ -1,5 +1,8 @@
 import { getRandomColor, PressedKeys } from 'utils';
-import { INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE } from '../constants';
+import {
+  INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE,
+  FIELD_WIDTH, FIELD_HEIGHT
+} from '../constants';
 
 export default function Snake({ color, direction = 0, points = [] } = {}) {
   return {
@@ -65,8 +68,24 @@ Snake.create = ({ start }) => {
 };
 
 function getNextPoint(point, direction) {
-  return {
-    x: point.x + Math.cos(direction) * SNAKE_STEP_LENGTH,
-    y: point.y - Math.sin(direction) * SNAKE_STEP_LENGTH
-  };
+  let x = point.x + Math.cos(direction) * SNAKE_STEP_LENGTH;
+  let y = point.y - Math.sin(direction) * SNAKE_STEP_LENGTH;
+
+  if (x < 0) {
+    x = FIELD_WIDTH + x;
+  }
+
+  if (x >= FIELD_WIDTH) {
+    x -= FIELD_WIDTH;
+  }
+
+  if (y < 0) {
+    y = FIELD_HEIGHT + y;
+  }
+
+  if (y >= FIELD_HEIGHT) {
+    y -= FIELD_HEIGHT;
+  }
+
+  return { x, y };
 }
