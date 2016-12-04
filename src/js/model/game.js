@@ -50,6 +50,7 @@ export default function Game() {
       const updatedPlayers = {};
       clientPlayers.forEach((token) => {
         players[token].fromJSON(json[token]);
+        updatedPlayers[token] = players[token];
       });
       newPlayers.forEach((token) => {
         updatedPlayers[token] = new Player({
