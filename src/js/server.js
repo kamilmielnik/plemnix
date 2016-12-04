@@ -19,11 +19,11 @@ const handlers = {
     });
     const { token } = player;
     game.addPlayer(token, player);
-    socket.on('close', (args) => {
+    socket.on('close', args => {
       console.log('closing connection', token, args);
       game.deletePlayer(token);
     });
-    socket.on('error', (args) => {
+    socket.on('error', args => {
       console.log('connection error', token, args);
     });
     socket.send(createSignInResponseMessage(token).serialize());
@@ -40,8 +40,8 @@ const handlers = {
 
 const { server, wsServer } = createServers();
 server.listen(SERVER_PORT, () => console.log(`HTTP server started at http://localhost:${SERVER_PORT}/`));
-wsServer.on('connection', (socket) => {
-  socket.on('message', (message) => {
+wsServer.on('connection', socket => {
+  socket.on('message', message => {
     try {
       const { type, token, payload } = JSON.parse(message);
       const handler = handlers[type];
@@ -56,14 +56,19 @@ wsServer.on('connection', (socket) => {
   });
 });
 
-setInterval(() => game.step(), SNAKE_MOVE_TIME);
+setInterval(() => {
+  game.step();
+  if(game.fruit.hasBeenEaten) {
+    game.fruit.revive();
+  }
+}, SNAKE_MOVE_TIME);
 
 setInterval(() => {
   const gameJSON = game.toJSON();
   const message = createStateUpdatedMessage(gameJSON);
   game.forEachPlayer(({ socket }) => {
-    if (socket.readyState === CONNECTION_ESTABLISHED) {
-      socket.send(message.serialize())
+    if(socket.readyState === CONNECTION_ESTABLISHED) {
+      socket.send(message.serialize());
     }
   });
 }, SYNC_TIME);

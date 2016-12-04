@@ -2,9 +2,17 @@ export default function PressedKeys() {
   let keys = {};
 
   return {
-    isPressed: key => Boolean(keys[key]),
-    press: (key) => keys[key] = true,
-    release: (key) => keys[key] = false,
+    isPressed(key) {
+      return Boolean(keys[key]);
+    },
+
+    press(key) {
+      keys[key] = true;
+    },
+
+    release(key) {
+      keys[key] = false;
+    },
 
     fromJSON(json) {
       keys = json;

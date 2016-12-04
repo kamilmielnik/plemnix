@@ -1,9 +1,15 @@
-import { Player } from 'model';
+import { FRUIT_COLOR } from 'constants';
+import { Fruit, Player } from 'model';
 
 export default function Game() {
   let players = {};
+  const fruit = Fruit.create();
 
   return {
+    get fruit() {
+      return fruit;
+    },
+
     addPlayer(token, player) {
       players[token] = player;
     },
@@ -27,46 +33,74 @@ export default function Game() {
     },
 
     step() {
-      Object.values(players).forEach((player) => {
-        const { pressedKeys, snake } = player;
-
-        if(pressedKeys.isPressed('ArrowLeft')) {
-          snake.turnLeft();
-        }
-
-        if(pressedKeys.isPressed('ArrowRight')) {
-          snake.turnRight();
-        }
-
-        snake.step();
-      });
+      handleKeyboardInput();
+      moveSnakes();
+      handleFruitCollisions();
     },
 
     fromJSON(json) {
-      const serverPlayers = Object.keys(json);
-      const clientPlayers = Object.keys(players).filter((token) => serverPlayers.includes(token));
-      const newPlayers = serverPlayers.filter((token) => !clientPlayers.includes(token));
+      fruit.fromJSON(json.fruit);
+      const serverPlayers = Object.keys(json.players);
+      const clientPlayers = Object.keys(players).filter(token => serverPlayers.includes(token));
+      const newPlayers = serverPlayers.filter(token => !clientPlayers.includes(token));
 
       const updatedPlayers = {};
-      clientPlayers.forEach((token) => {
-        players[token].fromJSON(json[token]);
+      clientPlayers.forEach(token => {
+        players[token].fromJSON(json.players[token]);
         updatedPlayers[token] = players[token];
       });
-      newPlayers.forEach((token) => {
+      newPlayers.forEach(token => {
         updatedPlayers[token] = new Player({
-          name: json[token].name
+          name: json.players[token].name
         });
-        updatedPlayers[token].fromJSON(json[token]);
+        updatedPlayers[token].fromJSON(json.players[token]);
       });
 
       players = updatedPlayers;
     },
 
     toJSON() {
-      return Object.keys(players).reduce((json, key) => ({
-        ...json,
-        [key]: players[key].toJSON()
-      }), {});
+      return {
+        fruit: fruit.toJSON(),
+        players: Object.keys(players).reduce((json, key) => ({
+          ...json,
+          [key]: players[key].toJSON()
+        }), {})
+      };
     }
   };
+
+  function handleFruitCollisions() {
+    if(fruit.hasBeenEaten) {
+      return;
+    }
+
+    Object.values(players).forEach(player => {
+      const { snake } = player;
+      const { points } = snake;
+      const head = points[points.length - 1] || {};
+      if(fruit.isPointInRange(head)) {
+        snake.eatFruit(fruit);
+        fruit.hasBeenEaten = true;
+      }
+    });
+  }
+
+  function handleKeyboardInput() {
+    Object.values(players).forEach(player => {
+      const { pressedKeys, snake } = player;
+
+      if(pressedKeys.isPressed('ArrowLeft')) {
+        snake.turnLeft();
+      }
+
+      if(pressedKeys.isPressed('ArrowRight')) {
+        snake.turnRight();
+      }
+    });
+  }
+
+  function moveSnakes() {
+    Object.values(players).forEach(({ snake }) => snake.step());
+  }
 }

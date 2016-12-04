@@ -8,6 +8,8 @@ export const SNAKE_TURN_ANGLE = 0.08;
 export const SNAKE_MOVE_TIME = 1000 / 60;
 export const FIELD_WIDTH = 800;
 export const FIELD_HEIGHT = 600;
+export const FRUIT_RADIUS = 5;
+export const FRUIT_VALUE = 10;
 
 /* server-specific */
 export const CONNECTION_ESTABLISHED = 1;
@@ -15,6 +17,5 @@ export const SYNC_TIME = 1000 / 10;
 
 /* client-specific */
 export const CANVAS_ID = 'game';
-export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 600;
+export const FRUIT_COLOR = '#ff0000';
 export const SNAKE_WIDTH = 1;

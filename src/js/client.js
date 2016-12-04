@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
-import { CANVAS_ID, CANVAS_HEIGHT, CANVAS_WIDTH, SNAKE_MOVE_TIME } from 'constants';
+import { CANVAS_ID, FIELD_HEIGHT, FIELD_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { KeysListener } from 'utils';
 import { MESSAGE_STATE_UPDATED } from 'api';
 import ApiClient from 'api/client';
@@ -12,6 +12,7 @@ main();
 
 function main() {
   const game = new Game();
+  game.fruit.hasBeenEaten = true;
   const gameView = new GameView(game);
   const canvasView = createCanvasView();
   canvasView.addView(gameView);
@@ -40,7 +41,7 @@ function main() {
 function createCanvasView() {
   return new CanvasView({
     id: CANVAS_ID,
-    height: CANVAS_HEIGHT,
-    width: CANVAS_WIDTH
+    height: FIELD_HEIGHT,
+    width: FIELD_WIDTH
   });
 }

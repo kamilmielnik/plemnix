@@ -12,10 +12,10 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
     }
   };
 
-  const ws = connect(onOpen, (message) => {
+  const ws = connect(onOpen, message => {
     const { type, payload } = message;
     const handler = handlers[type];
-    if (handler) {
+    if(handler) {
       handler(ws, payload);
     } else {
       console.log(`no handler for "${type}"`);
