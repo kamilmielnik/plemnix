@@ -110,6 +110,10 @@ html, body {
         .name {
           width: 130px;
           max-width: 130px;
+
+          &.dead {
+            text-decoration: line-through;
+          }
         }
 
         .score {

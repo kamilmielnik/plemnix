@@ -4,7 +4,7 @@ import {
   INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE
 } from '../constants';
 
-export default function Snake({ color, direction = 0, points = [], pointsToAdd = 0 } = {}) {
+export default function Snake({ color, direction = 0, isAlive = true, points = [], pointsToAdd = 0 } = {}) {
   return {
     get color() {
       return color;
@@ -16,6 +16,10 @@ export default function Snake({ color, direction = 0, points = [], pointsToAdd =
 
     get head() {
       return points[points.length - 1];
+    },
+
+    get isAlive() {
+      return isAlive;
     },
 
     get points() {
@@ -31,6 +35,8 @@ export default function Snake({ color, direction = 0, points = [], pointsToAdd =
     },
 
     step() {
+      if (!isAlive) return;
+
       const head = points[points.length - 1];
       const newHead = getNextPoint(head, direction);
       if(pointsToAdd > 0) {

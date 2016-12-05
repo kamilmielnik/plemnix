@@ -14,6 +14,10 @@ export default function Player({
       return snake.color;
     },
 
+    get isAlive() {
+      return snake.isAlive;
+    },
+
     get name() {
       return name;
     },
