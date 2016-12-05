@@ -4,25 +4,61 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300" rel="stylesheet">
     <title>Multiplayer Snake</title>
   </head>
 
   <body>
     <main id="app">
+      <div id="menu">
+        <div id="chat-box">
+          <div class="chat-messages">
+            <textarea id="chat" rows="10" disabled></textarea>
+          </div>
+
+          <div class="input">
+            <input id="chat-input" placeholder="Press [Tab] to chat..." />
+          </div>
+        </div>
+
+        <div id="players">
+          <div class="header player">
+            <div class="ping">Ping</div>
+            <div class="color"></div>
+            <div class="name">Name</div>
+            <div class="score">Score</div>
+          </div>
+
+          <div class="player">
+            <div class="ping">132</div>
+            <div class="color" style="background-color: red;"></div>
+            <div class="name">Kamil</div>
+            <div class="score">990</div>
+          </div>
+        </div>
+
+        <div class="button start-end">
+          Start
+        </div>
+      </div>
+
       <canvas id="game"></canvas>
     </main>
 
-    <script src="/js/app.js"></script>
+    <script src="/js/client.js"></script>
   </body>
 </html>
 
 <!--
+klient
+
+serwer
+  state sync
+  game start
+  game end
+
 1. powitanie
   C: hello, jestem xxx
-  S: oto mapa
-
-2. nowy gracz
-  S: nowy snake, masz tu mape
 
 3. start meczu
   S: start!

@@ -10,7 +10,7 @@ const PATHS = {
 
 const sassLoaders = [
   'style-loader',
-  'css-loader?sourceMap',
+  'css-loader',
   'postcss-loader',
   'sass-loader?outputStyle=expanded'
 ];
@@ -18,7 +18,7 @@ const sassLoaders = [
 module.exports = {
   env: process.env.NODE_ENV,
   entry: {
-    app: path.resolve(PATHS.app, 'client.js')
+    client: path.resolve(PATHS.app, 'client.js')
   },
   node: {
     fs: 'empty',
