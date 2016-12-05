@@ -23,6 +23,10 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
   });
 
   return {
+    get token() {
+      return token;
+    },
+
     signIn(name) {
       ws.send(createSignInMessage(name).serialize());
     },

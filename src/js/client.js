@@ -32,8 +32,15 @@ function main() {
   });
 
   const keysListener = new KeysListener({
-    onKeyDown: ({ key }) => apiClient.pressKey(key),
-    onKeyUp: ({ key }) => apiClient.releaseKey(key)
+    onKeyDown({ key }) {
+      apiClient.pressKey(key);
+      game.pressKey(apiClient.token, key);
+    },
+
+    onKeyUp({ key }) {
+      apiClient.releaseKey(key);
+      game.releaseKey(apiClient.token, key);
+    }
   });
   keysListener.attach();
 }
