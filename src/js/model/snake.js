@@ -22,6 +22,10 @@ export default function Snake({ color, direction = 0, points = [], pointsToAdd =
       return [...points];
     },
 
+    get score() {
+      return points.length + pointsToAdd - INITIAL_SNAKE_LENGTH;
+    },
+
     eatFruit() {
       pointsToAdd += FRUIT_VALUE;
     },
@@ -67,7 +71,7 @@ Snake.create = ({ start }) => new Snake({
   color: getRandomColor(),
   direction: 0,
   points: [start],
-  pointsToAdd: INITIAL_SNAKE_LENGTH
+  pointsToAdd: INITIAL_SNAKE_LENGTH - 1
 });
 
 function getNextPoint(point, direction) {

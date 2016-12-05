@@ -6,19 +6,21 @@ import { KeysListener } from 'utils';
 import { MESSAGE_STATE_UPDATED } from 'api';
 import ApiClient from 'api/client';
 import { Game, Snake } from 'model';
-import { CanvasView, GameView } from 'view';
+import { CanvasView, GameView, MenuView } from 'view';
 
 main();
 
 function main() {
   const game = new Game();
   game.fruit.hasBeenEaten = true;
+  const menuView = new MenuView(game);
   const gameView = new GameView(game);
   const canvasView = createCanvasView();
   canvasView.addView(gameView);
   canvasView.paint();
 
   let updateGameInterval = setInterval(() => game.step(), SNAKE_MOVE_TIME);
+  let updateMenuInterval = setInterval(() => menuView.paint(), 300);
 
   const apiClient = new ApiClient({
     onOpen: () => apiClient.signIn('kamil'),

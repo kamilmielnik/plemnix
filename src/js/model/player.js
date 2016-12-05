@@ -3,22 +3,35 @@ import { Snake } from 'model';
 
 export default function Player({
   name,
+  ping = NaN,
   pressedKeys = new PressedKeys(),
   snake = new Snake(),
   socket,
   token = generateToken()
 }) {
   return {
+    get color() {
+      return snake.color;
+    },
+
     get name() {
       return name;
     },
 
-    get snake() {
-      return snake;
+    get ping() {
+      return ping;
     },
 
     get pressedKeys() {
       return pressedKeys;
+    },
+
+    get score() {
+      return snake.score;
+    },
+
+    get snake() {
+      return snake;
     },
 
     get socket() {
@@ -31,6 +44,7 @@ export default function Player({
 
     fromJSON(json) {
       name = json.name;
+      ping = json.ping;
       pressedKeys.fromJSON(json.pressedKeys);
       snake.fromJSON(json.snake);
     },
@@ -38,6 +52,7 @@ export default function Player({
     toJSON() {
       return {
         name,
+        ping,
         pressedKeys: pressedKeys.toJSON(),
         snake: snake.toJSON()
       };

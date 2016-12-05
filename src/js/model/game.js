@@ -9,6 +9,10 @@ export default function Game() {
       return fruit;
     },
 
+    get players() {
+      return players;
+    },
+
     addPlayer(token, player) {
       players[token] = player;
     },
