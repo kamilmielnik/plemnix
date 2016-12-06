@@ -1,7 +1,7 @@
-import { getRandomColor, PressedKeys, segmentsIntersection } from 'utils';
+import { getRandomColor, PressedKeys, pointInCircle } from 'utils';
 import {
-  FIELD_WIDTH, FIELD_HEIGHT, FRUIT_VALUE,
-  INITIAL_SNAKE_LENGTH, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE
+  FIELD_WIDTH, FIELD_HEIGHT, FRUIT_VALUE, INITIAL_SNAKE_LENGTH,
+  SNAKE_HEAD_RADIUS, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE
 } from '../constants';
 
 export default function Snake({ color, direction = 0, isAlive = true, points = [], pointsToAdd = 0 } = {}) {
@@ -40,20 +40,12 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
       let pointsToCheck = null;
 
       if (snake === this) {
-        pointsToCheck = points.slice(0, points.length - 5); // why not 5, 2 should be enough though
+        pointsToCheck = points.slice(0, points.length - 10);
       } else {
-        pointsToCheck = snake.points.slice(1);
+        pointsToCheck = snake.points;
       }
 
-      let previousPoint = snake.points[0];
-      return pointsToCheck.some((point) => {
-        if (segmentsIntersection(head, neck, point, previousPoint)) {
-          return true;
-        }
-
-        previousPoint = point;
-        return false;
-      });
+      return pointsToCheck.some((point) => pointInCircle(head, point, SNAKE_HEAD_RADIUS));
     },
 
     kill() {
@@ -84,6 +76,7 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
     fromJSON(json) {
       color = json.color;
       direction = json.direction;
+      isAlive = json.isAlive;
       points = json.points;
       pointsToAdd = json.pointsToAdd;
     },
@@ -92,6 +85,7 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
       return {
         color,
         direction,
+        isAlive,
         points,
         pointsToAdd
       };
