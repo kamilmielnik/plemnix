@@ -1,32 +1,38 @@
 import 'babel-polyfill';
 import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
-import { CANVAS_ID, FIELD_HEIGHT, FIELD_WIDTH, SNAKE_MOVE_TIME } from 'constants';
+import { FIELD_HEIGHT, FIELD_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { KeysListener } from 'utils';
-import { MESSAGE_PING, MESSAGE_STATE_UPDATED } from 'api';
+import { MESSAGE_PING, MESSAGE_CHAT_UPDATED, MESSAGE_STATE_UPDATED } from 'api';
 import ApiClient from 'api/client';
-import { Game, Snake } from 'model';
-import { CanvasView, GameView, MenuView } from 'view';
+import { Chat, Game, Snake } from 'model';
+import { CanvasView, ChatView, GameView, PlayersView } from 'view';
 
 main();
 
 function main() {
   const game = new Game();
+  const chat = new Chat();
   game.fruit.hasBeenEaten = true;
-  const menuView = new MenuView(game);
+  const chatView = new ChatView(onSubmitMessage);
+  const playersView = new PlayersView();
   const gameView = new GameView(game);
   const canvasView = createCanvasView();
   canvasView.addView(gameView);
   canvasView.paint();
 
   let updateGameInterval = setInterval(() => game.step(), SNAKE_MOVE_TIME);
-  let updateMenuInterval = setInterval(() => menuView.paint(), 300);
+  let updateMenuInterval = setInterval(updateMenu, 300);
 
   const apiClient = new ApiClient({
     onOpen: () => apiClient.signIn('kamil'),
     customHandlers: {
       [MESSAGE_PING]: () => {
         apiClient.pong();
+      },
+
+      [MESSAGE_CHAT_UPDATED]: (ws, { chat: chatJSON }) => {
+        chat.fromJSON(chatJSON);
       },
 
       [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
@@ -39,21 +45,33 @@ function main() {
 
   const keysListener = new KeysListener({
     onKeyDown({ key }) {
-      apiClient.pressKey(key);
-      game.pressKey(apiClient.token, key);
+      if (['ArrowLeft', 'ArrowRight'].includes(key)) {
+        apiClient.pressKey(key);
+        game.pressKey(apiClient.token, key);
+      }
     },
 
     onKeyUp({ key }) {
-      apiClient.releaseKey(key);
-      game.releaseKey(apiClient.token, key);
+      if (['ArrowLeft', 'ArrowRight'].includes(key)) {
+        apiClient.releaseKey(key);
+        game.releaseKey(apiClient.token, key);
+      }
     }
   });
   keysListener.attach();
+
+  function onSubmitMessage(message) {
+    apiClient.chat(message);
+  }
+
+  function updateMenu() {
+    chatView.paint(chat);
+    playersView.paint(game.players);
+  }
 }
 
 function createCanvasView() {
   return new CanvasView({
-    id: CANVAS_ID,
     height: FIELD_HEIGHT,
     width: FIELD_WIDTH
   });

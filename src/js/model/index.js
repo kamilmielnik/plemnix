@@ -1,3 +1,4 @@
+export Chat from './chat';
 export Fruit from './fruit';
 export Game from './game';
 export Player from './player';

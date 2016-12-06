@@ -1,5 +1,5 @@
-export default function CanvasView({ id, width, height }) {
-  const canvas = document.getElementById(id);
+export default function CanvasView({ width, height }) {
+  const canvas = document.getElementById('game');
   canvas.width = width;
   canvas.height = height;
   const context = canvas.getContext('2d');

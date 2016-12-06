@@ -1,6 +1,6 @@
 import { SERVER_URL, SERVER_PORT } from '../constants';
 import {
-  MESSAGE_PONG,
+  MESSAGE_PONG, MESSAGE_CHAT,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
   MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE
 } from './types';
@@ -35,6 +35,10 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
       ws.send(createPongMessage().serialize());
     },
 
+    chat(message) {
+      ws.send(createChatMessage(message).serialize());
+    },
+
     signIn(name) {
       ws.send(createSignInMessage(name).serialize());
     },
@@ -52,6 +56,16 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
     return new Message({
       type: MESSAGE_PONG,
       token
+    });
+  }
+
+  function createChatMessage(message) {
+    return new Message({
+      type: MESSAGE_CHAT,
+      token,
+      payload: {
+        message
+      }
     });
   }
 

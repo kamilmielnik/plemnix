@@ -14,10 +14,10 @@ export const FRUIT_VALUE = 10;
 
 /* server-specific */
 export const CONNECTION_ESTABLISHED = 1;
-export const SYNC_TIME = 1000 / 12;
+export const GAME_SYNC_TIME = 1000 / 12;
 export const PING_SYNC_TIME = 2500;
+export const CHAT_SYNC_TIME = 1000 / 8;
 
 /* client-specific */
-export const CANVAS_ID = 'game';
 export const FRUIT_COLOR = '#6acc1c';
 export const SNAKE_WIDTH = 1;
