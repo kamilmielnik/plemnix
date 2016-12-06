@@ -42,6 +42,13 @@ export default function Game() {
       handleSnakesCollisions();
     },
 
+    stepServer() {
+      this.step();
+      if (fruit.hasBeenEaten) {
+        fruit.revive();
+      }
+    },
+
     fromJSON(json) {
       fruit.fromJSON(json.fruit);
       const serverPlayers = Object.keys(json.players);

@@ -10,69 +10,66 @@ import {
 } from './api';
 import { Game, Player, Snake } from './model';
 
-const game = new Game();
-const handlers = {
-  [MESSAGE_SIGN_IN]: (socket, _, { name }) => {
-    const player = new Player({
-      name,
-      snake: createDefaultSnake(),
-      socket
-    });
-    const { token } = player;
-    game.addPlayer(token, player);
-    socket.on('close', args => {
-      console.log('closing connection', token, args);
-      game.deletePlayer(token);
-    });
-    socket.on('error', args => {
-      console.log('connection error', token, args);
-    });
-    socket.send(createSignInResponseMessage(token).serialize());
-  },
+main();
 
-  [MESSAGE_KEY_PRESSED]: (ws, token, { key }) => {
-    game.pressKey(token, key);
-  },
+function main() {
+  const game = new Game();
+  const handlers = {
+    [MESSAGE_SIGN_IN]: (socket, _, { name }) => {
+      const player = new Player({
+        name,
+        snake: createDefaultSnake(),
+        socket
+      });
+      const { token } = player;
+      game.addPlayer(token, player);
+      socket.on('close', args => {
+        console.log('closing connection', token, args);
+        game.deletePlayer(token);
+      });
+      socket.on('error', args => {
+        console.log('connection error', token, args);
+      });
+      socket.send(createSignInResponseMessage(token).serialize());
+    },
 
-  [MESSAGE_KEY_RELEASED]: (ws, token, { key }) => {
-    game.releaseKey(token, key);
-  }
-};
+    [MESSAGE_KEY_PRESSED]: (ws, token, { key }) => {
+      game.pressKey(token, key);
+    },
 
-const { server, wsServer } = createServers();
-server.listen(SERVER_PORT, () => console.log(`HTTP server started at http://localhost:${SERVER_PORT}/`));
-wsServer.on('connection', socket => {
-  socket.on('message', message => {
-    try {
-      const { type, token, payload } = JSON.parse(message);
-      const handler = handlers[type];
-      if(handler) {
-        handler(socket, token, payload);
-      } else {
-        console.log(`no handler for "${type}"`);
+    [MESSAGE_KEY_RELEASED]: (ws, token, { key }) => {
+      game.releaseKey(token, key);
+    }
+  };
+
+  const { server, wsServer } = createServers();
+  server.listen(SERVER_PORT, () => console.log(`HTTP server started at http://localhost:${SERVER_PORT}/`));
+  wsServer.on('connection', socket => {
+    socket.on('message', message => {
+      try {
+        const { type, token, payload } = JSON.parse(message);
+        const handler = handlers[type];
+        if(handler) {
+          handler(socket, token, payload);
+        } else {
+          console.log(`no handler for "${type}"`);
+        }
+      } catch (error) {
+        console.log('JSON parsing error: ', error);
       }
-    } catch (error) {
-      console.log('JSON parsing error: ', error);
-    }
+    });
   });
-});
 
-setInterval(() => {
-  game.step();
-  if(game.fruit.hasBeenEaten) {
-    game.fruit.revive();
-  }
-}, SNAKE_MOVE_TIME);
-
-setInterval(() => {
-  const gameJSON = game.toJSON();
-  const message = createStateUpdatedMessage(gameJSON);
-  game.forEachPlayer(({ socket }) => {
-    if(socket.readyState === CONNECTION_ESTABLISHED) {
-      socket.send(message.serialize());
-    }
-  });
-}, SYNC_TIME);
+  setInterval(() => game.stepServer(), SNAKE_MOVE_TIME);
+  setInterval(() => {
+    const message = createStateUpdatedMessage(game.toJSON()).serialize();
+    game.forEachPlayer(({ socket }) => {
+      if(socket.readyState === CONNECTION_ESTABLISHED) {
+        socket.send(message);
+      }
+    });
+  }, SYNC_TIME);
+}
 
 function createServers() {
   const server = http.createServer();
