@@ -14,7 +14,8 @@ export const FRUIT_VALUE = 10;
 
 /* server-specific */
 export const CONNECTION_ESTABLISHED = 1;
-export const SYNC_TIME = 1000 / 10;
+export const SYNC_TIME = 1000 / 12;
+export const PING_SYNC_TIME = 2500;
 
 /* client-specific */
 export const CANVAS_ID = 'game';

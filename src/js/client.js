@@ -3,7 +3,7 @@ import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
 import { CANVAS_ID, FIELD_HEIGHT, FIELD_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { KeysListener } from 'utils';
-import { MESSAGE_STATE_UPDATED } from 'api';
+import { MESSAGE_PING, MESSAGE_STATE_UPDATED } from 'api';
 import ApiClient from 'api/client';
 import { Game, Snake } from 'model';
 import { CanvasView, GameView, MenuView } from 'view';
@@ -25,6 +25,10 @@ function main() {
   const apiClient = new ApiClient({
     onOpen: () => apiClient.signIn('kamil'),
     customHandlers: {
+      [MESSAGE_PING]: () => {
+        apiClient.pong();
+      },
+
       [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
         clearInterval(updateGameInterval);
         game.fromJSON(state);

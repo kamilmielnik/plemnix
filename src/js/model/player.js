@@ -9,6 +9,8 @@ export default function Player({
   socket,
   token = generateToken()
 }) {
+  let lastPing = null;
+
   return {
     get color() {
       return snake.color;
@@ -44,6 +46,14 @@ export default function Player({
 
     get token() {
       return token;
+    },
+
+    registerPing() {
+      lastPing = Number(new Date());
+    },
+
+    registerPong() {
+      ping = Number(new Date()) - lastPing;
     },
 
     fromJSON(json) {

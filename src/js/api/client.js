@@ -1,5 +1,9 @@
 import { SERVER_URL, SERVER_PORT } from '../constants';
-import { MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED, MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE } from './types';
+import {
+  MESSAGE_PONG,
+  MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
+  MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE
+} from './types';
 import Message from './message';
 
 export default function ApiClient({ onOpen, customHandlers = {} }) {
@@ -27,6 +31,10 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
       return token;
     },
 
+    pong() {
+      ws.send(createPongMessage().serialize());
+    },
+
     signIn(name) {
       ws.send(createSignInMessage(name).serialize());
     },
@@ -39,6 +47,13 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
       ws.send(createReleaseKeyMessage(key).serialize());
     }
   };
+
+  function createPongMessage() {
+    return new Message({
+      type: MESSAGE_PONG,
+      token
+    });
+  }
 
   function createSignInMessage(name) {
     return new Message({

@@ -21,6 +21,14 @@ export default function Game() {
       delete players[token];
     },
 
+    ping(token) {
+      players[token].registerPing();
+    },
+
+    pong(token) {
+      players[token].registerPong();
+    },
+
     pressKey(token, key) {
       const player = players[token];
       player.pressedKeys.press(key);

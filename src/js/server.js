@@ -1,9 +1,13 @@
 import 'babel-polyfill';
 import { Server as WebSocketServer } from 'ws';
 import http from 'http';
-import { CONNECTION_ESTABLISHED, SERVER_PORT, SNAKE_MOVE_TIME, SYNC_TIME } from './constants';
+import {
+  SERVER_PORT, CONNECTION_ESTABLISHED,
+  PING_SYNC_TIME, SYNC_TIME, SNAKE_MOVE_TIME
+} from './constants';
 import {
   Message,
+  MESSAGE_PING, MESSAGE_PONG,
   MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
   MESSAGE_STATE_UPDATED
@@ -15,6 +19,10 @@ main();
 function main() {
   const game = new Game();
   const handlers = {
+    [MESSAGE_PONG]: (socket, token) => {
+      game.pong(token);
+    },
+
     [MESSAGE_SIGN_IN]: (socket, _, { name }) => {
       const player = new Player({
         name,
@@ -23,14 +31,21 @@ function main() {
       });
       const { token } = player;
       game.addPlayer(token, player);
+      socket.token = token;
       socket.on('close', args => {
         console.log('closing connection', token, args);
+        clearInterval(pingSyncInterval);
         game.deletePlayer(token);
       });
-      socket.on('error', args => {
-        console.log('connection error', token, args);
-      });
+      socket.on('error', (args) => console.log('connection error', token, args));
       socket.send(createSignInResponseMessage(token).serialize());
+      setTimeout(ping, 10);
+      const pingSyncInterval = setInterval(ping, PING_SYNC_TIME);
+
+      function ping() {
+        game.ping(token);
+        socket.send(createPingMessage().serialize());
+      }
     },
 
     [MESSAGE_KEY_PRESSED]: (ws, token, { key }) => {
@@ -61,22 +76,16 @@ function main() {
   });
 
   setInterval(() => game.stepServer(), SNAKE_MOVE_TIME);
-  setInterval(() => {
-    const message = createStateUpdatedMessage(game.toJSON()).serialize();
-    game.forEachPlayer(({ socket }) => {
-      if(socket.readyState === CONNECTION_ESTABLISHED) {
-        socket.send(message);
-      }
-    });
-  }, SYNC_TIME);
+  setInterval(() => broadcast({
+    wsServer,
+    message: createStateUpdatedMessage(game.toJSON()).serialize()
+  }), SYNC_TIME);
 }
 
-function createServers() {
-  const server = http.createServer();
-  const wsServer = new WebSocketServer({
-    server
+function createPingMessage() {
+  return new Message({
+    type: MESSAGE_PING
   });
-  return { server, wsServer };
 }
 
 function createSignInResponseMessage(token) {
@@ -105,3 +114,18 @@ function createDefaultSnake() {
     }
   });
 }
+
+function createServers() {
+  const server = http.createServer();
+  const wsServer = new WebSocketServer({ server });
+  return { server, wsServer };
+}
+
+function broadcast({ wsServer, message, onAck = noop, onBeforeSend = noop }) {
+  wsServer.clients.forEach((client) => {
+    onBeforeSend(client);
+    client.send(message, () => onAck(client));
+  });
+};
+
+const noop = () => undefined;
