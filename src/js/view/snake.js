@@ -18,11 +18,11 @@ export default function SnakeView(snake) {
         }
       });
       context.stroke();
-      paintHead(context, snake);
+      paintHead(context);
     }
   };
 
-  function paintHead(context, snake) {
+  function paintHead(context) {
     const { color, head } = snake;
     context.beginPath();
     context.strokeStyle = color;

@@ -109,7 +109,7 @@ module.exports = {
     'no-new-wrappers': 'error',
     'no-octal': 'error',
     'no-octal-escape': 'error',
-    'no-param-reassign': 'error',
+    /*'no-param-reassign': 'error',*/
     'no-proto': 'error',
     'no-redeclare': 'error',
     'no-return-assign': 'error',
@@ -180,10 +180,10 @@ module.exports = {
     'func-names': ['error', 'never'],
     'func-style': 'off',
     'id-blacklist': 'off',
-    'id-length': ['error', {
+    /*'id-length': ['error', {
       'min': 3,
       'exceptions': ['_', 'id', 'to', 'i', 'x', 'y', 'fs']
-    }],
+    }],*/
     'id-match': 'off',
     'indent': ['error', 2],
     'key-spacing': ['error', {

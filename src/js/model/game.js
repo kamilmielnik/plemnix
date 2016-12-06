@@ -18,7 +18,7 @@ export default function Game() {
     },
 
     deletePlayer(token) {
-      delete players[token];
+      Reflect.deleteProperty(players, token);
     },
 
     ping(token) {
@@ -52,7 +52,7 @@ export default function Game() {
 
     stepServer() {
       this.step();
-      if (fruit.hasBeenEaten) {
+      if(fruit.hasBeenEaten) {
         fruit.revive();
       }
     },
@@ -60,15 +60,15 @@ export default function Game() {
     fromJSON(json) {
       fruit.fromJSON(json.fruit);
       const serverPlayers = Object.keys(json.players);
-      const clientPlayers = Object.keys(players).filter((token) => serverPlayers.includes(token));
-      const newPlayers = serverPlayers.filter((token) => !clientPlayers.includes(token));
+      const clientPlayers = Object.keys(players).filter(token => serverPlayers.includes(token));
+      const newPlayers = serverPlayers.filter(token => !clientPlayers.includes(token));
 
       const updatedPlayers = {};
-      clientPlayers.forEach((token) => {
+      clientPlayers.forEach(token => {
         players[token].fromJSON(json.players[token]);
         updatedPlayers[token] = players[token];
       });
-      newPlayers.forEach((token) => {
+      newPlayers.forEach(token => {
         updatedPlayers[token] = new Player({
           name: json.players[token].name
         });
@@ -90,7 +90,7 @@ export default function Game() {
   };
 
   function handleKeyboardInput() {
-    Object.values(players).forEach((player) => {
+    Object.values(players).forEach(player => {
       const { pressedKeys, snake } = player;
 
       if(pressedKeys.isPressed('ArrowLeft')) {
@@ -112,7 +112,7 @@ export default function Game() {
       return;
     }
 
-    Object.values(players).forEach((player) => {
+    Object.values(players).forEach(player => {
       const { snake } = player;
       if(fruit.collidesWithSnakeHead(snake)) {
         snake.eatFruit(fruit);
@@ -123,7 +123,7 @@ export default function Game() {
 
   function handleSnakesCollisions() {
     Object.values(players).forEach(({ snake }) => {
-      Object.values(players).forEach((player) => {
+      Object.values(players).forEach(player => {
         if(snake.hasCrashedIntoSnake(player.snake)) {
           snake.kill();
         }

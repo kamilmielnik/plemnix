@@ -1,20 +1,24 @@
-import { FRUIT_RADIUS } from 'constants';
-
 export default function PlayersView() {
   const playersNode = document.getElementById('players');
 
   return {
     paint(players = {}) {
       const documentFragment = document.createDocumentFragment();
-      documentFragment.appendChild(createHeaderRow())
-      const playersRows = Object.values(players).sort((player1, player2) => {
-        if (player1.isAlive && !player2.isAlive) return -1;
-        if (!player1.isAlive && player2.isAlive) return 1;
-        return player2.score - player1.score;
-      }).forEach((player) => {
-        const playerRow = createPlayerRow(player);
-        documentFragment.appendChild(playerRow);
-      });
+      documentFragment.appendChild(createHeaderRow());
+      Object.values(players)
+        .sort((player1, player2) => {
+          if(player1.isAlive && !player2.isAlive) {
+            return -1;
+          }
+          if(!player1.isAlive && player2.isAlive) {
+            return 1;
+          }
+          return player2.score - player1.score;
+        })
+        .forEach(player => {
+          const playerRow = createPlayerRow(player);
+          documentFragment.appendChild(playerRow);
+        });
 
       playersNode.innerHTML = '';
       playersNode.appendChild(documentFragment);
@@ -59,7 +63,7 @@ export default function PlayersView() {
   function createNameNode({ isAlive, name }) {
     const nameNode = document.createElement('div');
     nameNode.classList.add('name');
-    if (!isAlive) {
+    if(!isAlive) {
       nameNode.classList.add('dead');
     }
     nameNode.textContent = name;

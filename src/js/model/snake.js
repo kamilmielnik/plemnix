@@ -1,4 +1,4 @@
-import { getRandomColor, PressedKeys, pointInCircle } from 'utils';
+import { getRandomColor, pointInCircle } from 'utils';
 import {
   FIELD_WIDTH, FIELD_HEIGHT, FRUIT_VALUE, INITIAL_SNAKE_LENGTH,
   SNAKE_HEAD_RADIUS, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE
@@ -36,16 +36,15 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
 
     hasCrashedIntoSnake(snake) {
       const head = points[points.length - 1];
-      const neck = points[points.length - 2];
       let pointsToCheck = null;
 
-      if (snake === this) {
+      if(snake === this) {
         pointsToCheck = points.slice(0, points.length - 10);
       } else {
         pointsToCheck = snake.points;
       }
 
-      return pointsToCheck.some((point) => pointInCircle(head, point, SNAKE_HEAD_RADIUS));
+      return pointsToCheck.some(point => pointInCircle(head, point, SNAKE_HEAD_RADIUS));
     },
 
     kill() {
@@ -53,7 +52,9 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
     },
 
     step() {
-      if (!isAlive) return;
+      if(!isAlive) {
+        return;
+      }
 
       const head = points[points.length - 1];
       const newHead = getNextPoint(head, direction);

@@ -2,24 +2,24 @@ export default function ChatView(onSubmit) {
   const chatNode = document.getElementById('chat');
   const chatInputNode = document.getElementById('chat-input');
 
-  document.addEventListener('keydown', (event) => {
+  document.addEventListener('keydown', event => {
     const { key } = event;
-    if (key === 'Tab') {
+    if(key === 'Tab') {
       chatInputNode.focus();
       event.preventDefault();
     }
   });
 
-  chatInputNode.addEventListener('keydown', (event) => {
+  chatInputNode.addEventListener('keydown', event => {
     const { key } = event;
     event.stopPropagation();
 
-    if (key === 'Enter') {
+    if(key === 'Enter') {
       onSubmit(event.target.value);
       chatInputNode.value = '';
     }
 
-    if (['Tab', 'Enter', 'Escape'].includes(key)) {
+    if(['Tab', 'Enter', 'Escape'].includes(key)) {
       event.preventDefault();
       chatInputNode.blur();
     }
@@ -35,7 +35,7 @@ export default function ChatView(onSubmit) {
       chatNode.textContent = messages.join('\n');
       const hasScroll = chatNode.scrollHeight >= height;
       const hasScrollAppeared = didNotHadScroll && hasScroll;
-      if (wasScrolledToBottom || hasScrollAppeared) {
+      if(wasScrolledToBottom || hasScrollAppeared) {
         chatNode.scrollTop = Number.MAX_SAFE_INTEGER;
       }
     }

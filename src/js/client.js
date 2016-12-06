@@ -3,9 +3,9 @@ import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
 import { FIELD_HEIGHT, FIELD_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { KeysListener } from 'utils';
-import { MESSAGE_PING, MESSAGE_CHAT_UPDATED, MESSAGE_STATE_UPDATED } from 'api';
+import { MESSAGE_PING, MESSAGE_CHAT, MESSAGE_STATE_UPDATED } from 'api';
 import ApiClient from 'api/client';
-import { Chat, Game, Snake } from 'model';
+import { Chat, Game } from 'model';
 import { CanvasView, ChatView, GameView, PlayersView } from 'view';
 
 main();
@@ -22,17 +22,17 @@ function main() {
   canvasView.paint();
 
   let updateGameInterval = setInterval(() => game.step(), SNAKE_MOVE_TIME);
-  let updateMenuInterval = setInterval(updateMenu, 300);
+  setInterval(updateMenu, 300);
 
   const apiClient = new ApiClient({
     onOpen: () => apiClient.signIn('kamil'),
     customHandlers: {
-      [MESSAGE_PING]: () => {
-        apiClient.pong();
+      [MESSAGE_CHAT]: (ws, { name, message }) => {
+        chat.say(name, message);
       },
 
-      [MESSAGE_CHAT_UPDATED]: (ws, { chat: chatJSON }) => {
-        chat.fromJSON(chatJSON);
+      [MESSAGE_PING]: () => {
+        apiClient.pong();
       },
 
       [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
@@ -45,14 +45,14 @@ function main() {
 
   const keysListener = new KeysListener({
     onKeyDown({ key }) {
-      if (['ArrowLeft', 'ArrowRight'].includes(key)) {
+      if(['ArrowLeft', 'ArrowRight'].includes(key)) {
         apiClient.pressKey(key);
         game.pressKey(apiClient.token, key);
       }
     },
 
     onKeyUp({ key }) {
-      if (['ArrowLeft', 'ArrowRight'].includes(key)) {
+      if(['ArrowLeft', 'ArrowRight'].includes(key)) {
         apiClient.releaseKey(key);
         game.releaseKey(apiClient.token, key);
       }

@@ -8,10 +8,10 @@ export default function getRandomColor() {
   return generator.next().value;
 }
 
-function* getColor() {
+function *getColor() {
   let index = 0;
 
-  while(true) {
+  while (true) {
     yield colors[index++ % colors.length];
   }
 }

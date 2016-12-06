@@ -3,4 +3,4 @@ export default function pointInCircle(point, circleCenter, circleRadius) {
   const yDifference = point.y - circleCenter.y;
 
   return xDifference * xDifference + yDifference * yDifference < circleRadius * circleRadius;
-};
+}

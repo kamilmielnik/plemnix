@@ -2,27 +2,30 @@ import 'babel-polyfill';
 import { Server as WebSocketServer } from 'ws';
 import http from 'http';
 import {
-  SERVER_PORT, CONNECTION_ESTABLISHED,
-  GAME_SYNC_TIME, PING_SYNC_TIME, CHAT_SYNC_TIME, SNAKE_MOVE_TIME
+  SERVER_PORT,
+  GAME_SYNC_TIME, PING_SYNC_TIME, SNAKE_MOVE_TIME
 } from './constants';
 import {
   Message,
   MESSAGE_PING, MESSAGE_PONG, MESSAGE_CHAT,
   MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
-  MESSAGE_CHAT_UPDATED, MESSAGE_STATE_UPDATED
+  MESSAGE_STATE_UPDATED
 } from './api';
-import { Chat, Game, Player, Snake } from './model';
+import { Game, Player, Snake } from './model';
 
 main();
 
 function main() {
+  const { server, wsServer } = createServers();
   const game = new Game();
-  const chat = new Chat();
   const handlers = {
     [MESSAGE_CHAT]: (socket, token, { message }) => {
       const { name } = game.players[token];
-      chat.say(name, message);
+      broadcast({
+        wsServer,
+        message: createChatMessage(name, message).serialize()
+      });
     },
 
     [MESSAGE_PONG]: (socket, token) => {
@@ -43,7 +46,7 @@ function main() {
         clearInterval(pingSyncInterval);
         game.deletePlayer(token);
       });
-      socket.on('error', (args) => console.log('connection error', token, args));
+      socket.on('error', args => console.log('connection error', token, args));
       socket.send(createSignInResponseMessage(token).serialize());
       setTimeout(ping, 10);
       const pingSyncInterval = setInterval(ping, PING_SYNC_TIME);
@@ -63,7 +66,6 @@ function main() {
     }
   };
 
-  const { server, wsServer } = createServers();
   server.listen(SERVER_PORT, () => console.log(`HTTP server started at http://localhost:${SERVER_PORT}/`));
   wsServer.on('connection', socket => {
     socket.on('message', message => {
@@ -86,10 +88,6 @@ function main() {
     wsServer,
     message: createStateUpdatedMessage(game.toJSON()).serialize()
   }), GAME_SYNC_TIME);
-  setInterval(() => broadcast({
-    wsServer,
-    message: createChatUpdatedMessage(chat.toJSON()).serialize()
-  }), CHAT_SYNC_TIME);
 }
 
 function createPingMessage() {
@@ -98,11 +96,12 @@ function createPingMessage() {
   });
 }
 
-function createChatUpdatedMessage(chat) {
+function createChatMessage(name, message) {
   return new Message({
-    type: MESSAGE_CHAT_UPDATED,
+    type: MESSAGE_CHAT,
     payload: {
-      chat
+      name,
+      message
     }
   });
 }
@@ -141,10 +140,10 @@ function createServers() {
 }
 
 function broadcast({ wsServer, message, onAck = noop, onBeforeSend = noop }) {
-  wsServer.clients.forEach((client) => {
+  wsServer.clients.forEach(client => {
     onBeforeSend(client);
     client.send(message, () => onAck(client));
   });
-};
+}
 
 const noop = () => undefined;
