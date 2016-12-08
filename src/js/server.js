@@ -10,6 +10,7 @@ import {
   MESSAGE_PING, MESSAGE_PONG, MESSAGE_CHAT,
   MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
+  MESSAGE_GAME_START, MESSAGE_GAME_STOP, MESSAGE_GAME_RESET,
   MESSAGE_STATE_UPDATED
 } from './api';
 import { Game, Player, Snake } from './model';
@@ -35,7 +36,7 @@ function main() {
     [MESSAGE_SIGN_IN]: (socket, _, { name }) => {
       const player = new Player({
         name,
-        snake: createDefaultSnake(),
+        snake: Snake.create(),
         socket
       });
       const { token } = player;
@@ -63,6 +64,18 @@ function main() {
 
     [MESSAGE_KEY_RELEASED]: (ws, token, { key }) => {
       game.releaseKey(token, key);
+    },
+
+    [MESSAGE_GAME_START]: () => {
+      game.start();
+    },
+
+    [MESSAGE_GAME_STOP]: () => {
+      game.stop();
+    },
+
+    [MESSAGE_GAME_RESET]: () => {
+      game.reset();
     }
   };
 
@@ -120,15 +133,6 @@ function createStateUpdatedMessage(state) {
     type: MESSAGE_STATE_UPDATED,
     payload: {
       state
-    }
-  });
-}
-
-function createDefaultSnake() {
-  return Snake.create({
-    start: {
-      x: 100,
-      y: 100
     }
   });
 }

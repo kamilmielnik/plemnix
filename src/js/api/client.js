@@ -2,7 +2,8 @@ import { SERVER_URL, SERVER_PORT } from '../constants';
 import {
   MESSAGE_PONG, MESSAGE_CHAT,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
-  MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE
+  MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE,
+  MESSAGE_GAME_START, MESSAGE_GAME_STOP, MESSAGE_GAME_RESET
 } from './types';
 import Message from './message';
 
@@ -49,12 +50,45 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
 
     releaseKey(key) {
       ws.send(createReleaseKeyMessage(key).serialize());
+    },
+
+    startGame() {
+      ws.send(createStartGameMessage().serialize());
+    },
+
+    stopGame() {
+      ws.send(createStopGameMessage().serialize());
+    },
+
+    resetGame() {
+      ws.send(createResetGameMessage().serialize());
     }
   };
 
   function createPongMessage() {
     return new Message({
       type: MESSAGE_PONG,
+      token
+    });
+  }
+
+  function createStartGameMessage() {
+    return new Message({
+      type: MESSAGE_GAME_START,
+      token
+    });
+  }
+
+  function createStopGameMessage() {
+    return new Message({
+      type: MESSAGE_GAME_STOP,
+      token
+    });
+  }
+
+  function createResetGameMessage() {
+    return new Message({
+      type: MESSAGE_GAME_RESET,
       token
     });
   }

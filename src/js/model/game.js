@@ -2,11 +2,16 @@ import { Fruit, Player } from 'model';
 
 export default function Game() {
   let players = {};
+  let isRunning = false;
   const fruit = Fruit.create();
 
   return {
     get fruit() {
       return fruit;
+    },
+
+    get isRunning() {
+      return isRunning;
     },
 
     get players() {
@@ -44,10 +49,13 @@ export default function Game() {
     },
 
     step() {
-      handleKeyboardInput();
-      moveSnakes();
-      handleFruitCollisions();
-      handleSnakesCollisions();
+      if (isRunning) {
+        handleKeyboardInput();
+        moveSnakes();
+        handleFruitCollisions();
+        handleSnakesCollisions();
+        handleGameEnd();
+      }
     },
 
     stepServer() {
@@ -55,6 +63,23 @@ export default function Game() {
       if(fruit.hasBeenEaten) {
         fruit.revive();
       }
+    },
+
+    start() {
+      isRunning = true;
+    },
+
+    stop() {
+      isRunning = false;
+    },
+
+    reset() {
+      this.stop();
+      do {
+        Object.values(players).forEach((player) => player.reset());
+        handleSnakesCollisions();
+      } while (Object.values(players).some(({ isAlive }) => !isAlive));
+      fruit.reset();
     },
 
     fromJSON(json) {
@@ -76,11 +101,13 @@ export default function Game() {
       });
 
       players = updatedPlayers;
+      isRunning = json.isRunning;
     },
 
     toJSON() {
       return {
         fruit: fruit.toJSON(),
+        isRunning,
         players: Object.keys(players).reduce((json, key) => ({
           ...json,
           [key]: players[key].toJSON()
@@ -129,5 +156,15 @@ export default function Game() {
         }
       });
     });
+  }
+
+  function handleGameEnd() {
+    const numberOfPlayers = Object.values(players).length;
+    const numberOfAlivePlayers = Object.values(players).filter(({ isAlive }) => isAlive).length;
+    const isEnoughPlayersAlive = [
+      numberOfPlayers === 1 && numberOfAlivePlayers === 1,
+      numberOfAlivePlayers > 1
+    ].some(Boolean);
+    isRunning = isEnoughPlayersAlive;
   }
 }

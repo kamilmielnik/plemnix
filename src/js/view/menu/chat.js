@@ -1,8 +1,8 @@
-export default function ChatView(onSubmit) {
+export default function ChatView({ onSubmitMessage }) {
   const chatNode = document.getElementById('chat');
   const chatInputNode = document.getElementById('chat-input');
 
-  document.addEventListener('keydown', event => {
+  document.addEventListener('keydown', (event) => {
     const { key } = event;
     if(key === 'Tab') {
       chatInputNode.focus();
@@ -10,12 +10,12 @@ export default function ChatView(onSubmit) {
     }
   });
 
-  chatInputNode.addEventListener('keydown', event => {
+  chatInputNode.addEventListener('keydown', (event) => {
     const { key } = event;
     event.stopPropagation();
 
     if(key === 'Enter') {
-      onSubmit(event.target.value);
+      onSubmitMessage(event.target.value);
       chatInputNode.value = '';
     }
 

@@ -24,6 +24,10 @@ export default function Fruit({ color, point, hasBeenEaten }) {
       return pointInCircle(head, point, FRUIT_RADIUS + SNAKE_HEAD_RADIUS);
     },
 
+    reset() {
+      this.revive();
+    },
+
     revive() {
       hasBeenEaten = false;
       point = getRandomPoint();

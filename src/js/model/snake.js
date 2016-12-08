@@ -1,6 +1,7 @@
 import { getRandomColor, pointInCircle } from 'utils';
 import {
   FIELD_WIDTH, FIELD_HEIGHT, FRUIT_VALUE, INITIAL_SNAKE_LENGTH,
+  MIN_POINTS_TO_COMPUTE_SELF_COLLISIONS,
   SNAKE_HEAD_RADIUS, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE
 } from '../constants';
 
@@ -39,7 +40,10 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
       let pointsToCheck = null;
 
       if(snake === this) {
-        pointsToCheck = points.slice(0, points.length - 10);
+        if(points.length < MIN_POINTS_TO_COMPUTE_SELF_COLLISIONS) {
+          return false;
+        }
+        pointsToCheck = points.slice(0, points.length - MIN_POINTS_TO_COMPUTE_SELF_COLLISIONS);
       } else {
         pointsToCheck = snake.points;
       }
@@ -74,6 +78,14 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
       direction -= SNAKE_TURN_ANGLE;
     },
 
+    reset() {
+      const defaultSnake = getDefaultSnakeConfig();
+      direction = defaultSnake.direction;
+      points = defaultSnake.points;
+      pointsToAdd = defaultSnake.pointsToAdd;
+      isAlive = true;
+    },
+
     fromJSON(json) {
       color = json.color;
       direction = json.direction;
@@ -94,12 +106,23 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
   };
 }
 
-Snake.create = ({ start }) => new Snake({
-  color: getRandomColor(),
-  direction: 0,
-  points: [start],
-  pointsToAdd: INITIAL_SNAKE_LENGTH - 1
-});
+Snake.create = () => {
+  return new Snake(getDefaultSnakeConfig());
+};
+
+function getDefaultSnakeConfig() {
+  return {
+    color: getRandomColor(),
+    direction: Math.random() * 2 * Math.PI,
+    points: [
+      {
+        x: Math.random() * FIELD_WIDTH,
+        y: Math.random() * FIELD_HEIGHT
+      }
+    ],
+    pointsToAdd: INITIAL_SNAKE_LENGTH - 1
+  };
+}
 
 function getNextPoint(point, direction) {
   let x = point.x + Math.cos(direction) * SNAKE_STEP_LENGTH;

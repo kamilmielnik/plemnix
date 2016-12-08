@@ -6,7 +6,7 @@ import { KeysListener } from 'utils';
 import { MESSAGE_PING, MESSAGE_CHAT, MESSAGE_STATE_UPDATED } from 'api';
 import ApiClient from 'api/client';
 import { Chat, Game } from 'model';
-import { CanvasView, ChatView, GameView, PlayersView } from 'view';
+import { CanvasView, ChatView, GameView, GameControlView, PlayersView } from 'view';
 
 main();
 
@@ -14,8 +14,9 @@ function main() {
   const game = new Game();
   const chat = new Chat();
   game.fruit.hasBeenEaten = true;
-  const chatView = new ChatView(onSubmitMessage);
+  const chatView = new ChatView({ onSubmitMessage });
   const playersView = new PlayersView();
+  const startStopView = new GameControlView({ onStartStopGame, onResetGame });
   const gameView = new GameView(game);
   const canvasView = createCanvasView();
   canvasView.addView(gameView);
@@ -64,7 +65,20 @@ function main() {
     apiClient.chat(message);
   }
 
+  function onStartStopGame() {
+    if (game.isRunning) {
+      apiClient.stopGame();
+    } else {
+      apiClient.startGame();
+    }
+  }
+
+  function onResetGame() {
+    apiClient.resetGame();
+  }
+
   function updateMenu() {
+    startStopView.paint(game.isRunning);
     chatView.paint(chat);
     playersView.paint(game.players);
   }

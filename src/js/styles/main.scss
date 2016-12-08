@@ -139,11 +139,18 @@ html, body {
     }
 
     .button {
-      &.start-end {
+      &.game-control {
         position: absolute;
-        bottom: 10px;
         left: 10px;
         right: 10px;
+
+        &#game-control-reset {
+          bottom: 55px;
+        }
+
+        &#game-control-start-stop {
+          bottom: 10px;
+        }
       }
     }
   }

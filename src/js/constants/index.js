@@ -7,6 +7,7 @@ export const SNAKE_STEP_LENGTH = 2;
 export const SNAKE_TURN_ANGLE = 0.08;
 export const SNAKE_MOVE_TIME = 1000 / 60;
 export const SNAKE_HEAD_RADIUS = 2;
+export const MIN_POINTS_TO_COMPUTE_SELF_COLLISIONS = 10;
 export const FIELD_WIDTH = 600;
 export const FIELD_HEIGHT = 600;
 export const FRUIT_RADIUS = 5;

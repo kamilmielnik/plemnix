@@ -56,6 +56,11 @@ export default function Player({
       ping = Number(new Date()) - lastPing;
     },
 
+    reset() {
+      pressedKeys = new PressedKeys();
+      snake.reset();
+    },
+
     fromJSON(json) {
       name = json.name;
       ping = json.ping;
