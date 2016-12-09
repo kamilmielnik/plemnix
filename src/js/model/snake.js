@@ -48,7 +48,7 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
         pointsToCheck = snake.points;
       }
 
-      return pointsToCheck.some(point => pointInCircle(head, point, SNAKE_HEAD_RADIUS));
+      return pointsToCheck.some((point) => pointInCircle(head, point, SNAKE_HEAD_RADIUS));
     },
 
     kill() {
@@ -106,9 +106,7 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
   };
 }
 
-Snake.create = () => {
-  return new Snake(getDefaultSnakeConfig());
-};
+Snake.create = () => new Snake(getDefaultSnakeConfig());
 
 function getDefaultSnakeConfig() {
   return {

@@ -6,10 +6,10 @@ export default function CanvasView({ width, height }) {
   const views = [];
 
   return {
-    addView: view => views.push(view),
+    addView: (view) => views.push(view),
     paint: function paint() {
       context.clearRect(0, 0, width, height);
-      views.forEach(view => view.paint(context));
+      views.forEach((view) => view.paint(context));
       window.requestAnimationFrame(paint);
     }
   };

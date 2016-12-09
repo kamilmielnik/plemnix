@@ -36,5 +36,5 @@ export default function SnakeView(snake) {
 function lineCrossesBounds(start, end) {
   const xDifference = Math.abs(start.x - end.x);
   const yDifference = Math.abs(start.y - end.y);
-  return [xDifference, yDifference].some(difference => difference > SNAKE_STEP_LENGTH);
+  return [xDifference, yDifference].some((difference) => difference > SNAKE_STEP_LENGTH);
 }

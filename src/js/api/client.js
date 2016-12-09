@@ -17,7 +17,7 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
     }
   };
 
-  const ws = connect(onOpen, message => {
+  const ws = connect(onOpen, (message) => {
     const { type, payload } = message;
     const handler = handlers[type];
     if(handler) {
@@ -136,8 +136,8 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
 function connect(onOpen, onMessage) {
   const ws = new WebSocket(`ws://${SERVER_URL}:${SERVER_PORT}`, null);
   ws.onopen = onOpen;
-  ws.onerror = error => console.log('Error: ', error);
-  ws.onmessage = message => {
+  ws.onerror = (error) => console.log('Error: ', error);
+  ws.onmessage = (message) => {
     try {
       const json = JSON.parse(message.data);
       onMessage(json);

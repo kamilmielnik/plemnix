@@ -15,7 +15,7 @@ export default function PlayersView() {
           }
           return player2.score - player1.score;
         })
-        .forEach(player => {
+        .forEach((player) => {
           const playerRow = createPlayerRow(player);
           documentFragment.appendChild(playerRow);
         });

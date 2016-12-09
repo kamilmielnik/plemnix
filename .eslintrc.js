@@ -33,7 +33,7 @@ module.exports = {
     'comma-dangle': 'error',
     'no-cond-assign': 'error',
     'no-console': 'warn',
-    'no-constant-condition': 'error',
+    'no-constant-condition': 'off',
     'no-control-regex': 'error',
     'no-debugger': 'warn',
     'no-dupe-args': 'error',
@@ -276,7 +276,7 @@ module.exports = {
 
     // ECMAScript 6
     'arrow-body-style': ['error', 'as-needed'],
-    'arrow-parens': ['error', 'as-needed'],
+    'arrow-parens': ['error', 'always'],
     'arrow-spacing': ['error', {
       'before': true,
       'after': true

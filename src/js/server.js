@@ -42,12 +42,12 @@ function main() {
       const { token } = player;
       game.addPlayer(token, player);
       socket.token = token;
-      socket.on('close', args => {
+      socket.on('close', (args) => {
         console.log('closing connection', token, args);
         clearInterval(pingSyncInterval);
         game.deletePlayer(token);
       });
-      socket.on('error', args => console.log('connection error', token, args));
+      socket.on('error', (args) => console.log('connection error', token, args));
       socket.send(createSignInResponseMessage(token).serialize());
       setTimeout(ping, 10);
       const pingSyncInterval = setInterval(ping, PING_SYNC_TIME);
@@ -80,8 +80,8 @@ function main() {
   };
 
   server.listen(SERVER_PORT, () => console.log(`HTTP server started at http://localhost:${SERVER_PORT}/`));
-  wsServer.on('connection', socket => {
-    socket.on('message', message => {
+  wsServer.on('connection', (socket) => {
+    socket.on('message', (message) => {
       try {
         const { type, token, payload } = JSON.parse(message);
         const handler = handlers[type];
@@ -144,7 +144,7 @@ function createServers() {
 }
 
 function broadcast({ wsServer, message, onAck = noop, onBeforeSend = noop }) {
-  wsServer.clients.forEach(client => {
+  wsServer.clients.forEach((client) => {
     onBeforeSend(client);
     client.send(message, () => onAck(client));
   });

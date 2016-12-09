@@ -2,8 +2,9 @@ import { WINNING_POINTS_TRESHOLD } from '../constants';
 import { Fruit, Player } from 'model';
 
 export default function Game() {
-  let players = {};
+  let hasBeenRan = false;
   let isRunning = false;
+  let players = {};
   const fruit = Fruit.create();
 
   return {
@@ -20,6 +21,10 @@ export default function Game() {
     },
 
     get winner() {
+      if(!hasBeenRan) {
+        return null;
+      }
+
       const alivePlayers = Object.values(players).filter(({ isAlive }) => isAlive);
       alivePlayers.sort((a, b) => a.score < b.score);
       return alivePlayers[0];
@@ -56,7 +61,7 @@ export default function Game() {
     },
 
     step() {
-      if (isRunning) {
+      if(isRunning) {
         handleKeyboardInput();
         moveSnakes();
         handleFruitCollisions();
@@ -74,6 +79,7 @@ export default function Game() {
 
     start() {
       isRunning = true;
+      hasBeenRan = true;
     },
 
     stop() {
@@ -82,6 +88,7 @@ export default function Game() {
 
     reset() {
       this.stop();
+      hasBeenRan = false;
       do {
         Object.values(players).forEach((player) => player.reset());
         handleSnakesCollisions();
@@ -92,15 +99,15 @@ export default function Game() {
     fromJSON(json) {
       fruit.fromJSON(json.fruit);
       const serverPlayers = Object.keys(json.players);
-      const clientPlayers = Object.keys(players).filter(token => serverPlayers.includes(token));
-      const newPlayers = serverPlayers.filter(token => !clientPlayers.includes(token));
+      const clientPlayers = Object.keys(players).filter((token) => serverPlayers.includes(token));
+      const newPlayers = serverPlayers.filter((token) => !clientPlayers.includes(token));
 
       const updatedPlayers = {};
-      clientPlayers.forEach(token => {
+      clientPlayers.forEach((token) => {
         players[token].fromJSON(json.players[token]);
         updatedPlayers[token] = players[token];
       });
-      newPlayers.forEach(token => {
+      newPlayers.forEach((token) => {
         updatedPlayers[token] = new Player({
           name: json.players[token].name
         });
@@ -109,12 +116,14 @@ export default function Game() {
 
       players = updatedPlayers;
       isRunning = json.isRunning;
+      hasBeenRan = json.hasBeenRan;
     },
 
     toJSON() {
       return {
         fruit: fruit.toJSON(),
         isRunning,
+        hasBeenRan,
         players: Object.keys(players).reduce((json, key) => ({
           ...json,
           [key]: players[key].toJSON()
@@ -124,7 +133,7 @@ export default function Game() {
   };
 
   function handleKeyboardInput() {
-    Object.values(players).forEach(player => {
+    Object.values(players).forEach((player) => {
       const { pressedKeys, snake } = player;
 
       if(pressedKeys.isPressed('ArrowLeft')) {
@@ -146,7 +155,7 @@ export default function Game() {
       return;
     }
 
-    Object.values(players).forEach(player => {
+    Object.values(players).forEach((player) => {
       const { snake } = player;
       if(fruit.collidesWithSnakeHead(snake)) {
         snake.eatFruit(fruit);
@@ -157,7 +166,7 @@ export default function Game() {
 
   function handleSnakesCollisions() {
     Object.values(players).forEach(({ snake }) => {
-      Object.values(players).forEach(player => {
+      Object.values(players).forEach((player) => {
         if(snake.hasCrashedIntoSnake(player.snake)) {
           snake.kill();
         }

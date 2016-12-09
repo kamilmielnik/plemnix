@@ -66,7 +66,7 @@ function main() {
   }
 
   function onStartStopGame() {
-    if (game.isRunning) {
+    if(game.isRunning) {
       apiClient.stopGame();
     } else {
       apiClient.startGame();
