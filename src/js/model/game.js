@@ -1,3 +1,4 @@
+import { WINNING_POINTS_TRESHOLD } from '../constants';
 import { Fruit, Player } from 'model';
 
 export default function Game() {
@@ -16,6 +17,12 @@ export default function Game() {
 
     get players() {
       return players;
+    },
+
+    get winner() {
+      const alivePlayers = Object.values(players).filter(({ isAlive }) => isAlive);
+      alivePlayers.sort((a, b) => a.score < b.score);
+      return alivePlayers[0];
     },
 
     addPlayer(token, player) {
@@ -165,6 +172,12 @@ export default function Game() {
       numberOfPlayers === 1 && numberOfAlivePlayers === 1,
       numberOfAlivePlayers > 1
     ].some(Boolean);
-    isRunning = isEnoughPlayersAlive;
+
+    const highestScore = Object.values(players).reduce(
+      (maxPoints, { score }) => Math.max(maxPoints, score),
+      0
+    );
+
+    isRunning = isEnoughPlayersAlive && highestScore < WINNING_POINTS_TRESHOLD;
   }
 }

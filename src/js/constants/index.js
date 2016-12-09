@@ -12,6 +12,7 @@ export const FIELD_WIDTH = 600;
 export const FIELD_HEIGHT = 600;
 export const FRUIT_RADIUS = 5;
 export const FRUIT_VALUE = 10;
+export const WINNING_POINTS_TRESHOLD = 1000;
 
 /* server-specific */
 export const CONNECTION_ESTABLISHED = 1;
