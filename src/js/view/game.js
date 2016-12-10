@@ -17,21 +17,33 @@ export default function GameView(game) {
         const snakeView = new SnakeView(snake);
         snakeView.paint(context);
       });
-
       fruitView.paint(context);
+      paintMessages(context);
+    }
+  };
 
-      if(game.isOver) {
+  function paintMessages(context) {
+    if(!game.isRunning) {
+      const isAwaiting = game.isOver && !game.hasStarted;
+      const isPaused = !game.isOver && game.hasStarted;
+      const isGameOver = game.isOver && game.hasStarted;
+
+      if(isAwaiting) {
+        paintAwaitingMessage(context);
+      }
+
+      if(isGameOver) {
+        paintGameOverMessage(context);
         if(game.winner) {
-          paintGameOverMessage(context);
           paintWinnerMessage(context);
-        } else {
-          paintAwaitingMessage(context);
         }
-      } else if(!game.isRunning) {
+      }
+
+      if(isPaused) {
         paintPauseMessage(context);
       }
     }
-  };
+  }
 
   function paintGameOverMessage(context) {
     context.fillStyle = 'black';

@@ -2,9 +2,9 @@ import { WINNING_POINTS_TRESHOLD } from '../constants';
 import { Fruit, Player } from 'model';
 
 export default function Game() {
-  let isOver = false;
+  let isOver = true;
   let isRunning = false;
-  let hasBeenRan = false;
+  let hasStarted = false;
   let players = {};
   const fruit = Fruit.create();
 
@@ -17,6 +17,10 @@ export default function Game() {
       return isOver;
     },
 
+    get hasStarted() {
+      return hasStarted;
+    },
+
     get isRunning() {
       return isRunning;
     },
@@ -26,13 +30,7 @@ export default function Game() {
     },
 
     get winner() {
-      if(!hasBeenRan) {
-        return null;
-      }
-
-      const alivePlayers = Object.values(players).filter(({ isAlive }) => isAlive);
-      alivePlayers.sort((a, b) => a.score < b.score);
-      return alivePlayers[0];
+      return Object.values(players).find((player) => player.hasWon);
     },
 
     addPlayer(token, player) {
@@ -84,7 +82,8 @@ export default function Game() {
 
     start() {
       isRunning = true;
-      hasBeenRan = true;
+      hasStarted = true;
+      isOver = false;
     },
 
     stop() {
@@ -92,9 +91,9 @@ export default function Game() {
     },
 
     reset() {
-      this.stop();
-      hasBeenRan = false;
-      isOver = false;
+      isRunning = false;
+      hasStarted = false;
+      isOver = true;
       do {
         Object.values(players).forEach((player) => player.reset());
         handleSnakesCollisions();
@@ -123,7 +122,7 @@ export default function Game() {
       players = updatedPlayers;
       isOver = json.isOver;
       isRunning = json.isRunning;
-      hasBeenRan = json.hasBeenRan;
+      hasStarted = json.hasStarted;
     },
 
     toJSON() {
@@ -131,7 +130,7 @@ export default function Game() {
         fruit: fruit.toJSON(),
         isOver,
         isRunning,
-        hasBeenRan,
+        hasStarted,
         players: Object.keys(players).reduce((json, key) => ({
           ...json,
           [key]: players[key].toJSON()
@@ -139,6 +138,16 @@ export default function Game() {
       };
     }
   };
+
+  function getWinner() {
+    if(!hasStarted) {
+      return null;
+    }
+
+    const alivePlayers = Object.values(players).filter(({ isAlive }) => isAlive);
+    alivePlayers.sort((a, b) => a.score < b.score);
+    return alivePlayers[0];
+  }
 
   function handleKeyboardInput() {
     Object.values(players).forEach((player) => {
@@ -197,5 +206,9 @@ export default function Game() {
 
     isRunning = isEnoughPlayersAlive && highestScore < WINNING_POINTS_TRESHOLD;
     isOver = !isRunning;
+    const winner = getWinner();
+    if(winner) {
+      winner.setAsWinner();
+    }
   }
 }

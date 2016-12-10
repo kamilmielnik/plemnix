@@ -3,6 +3,7 @@ import { Snake } from 'model';
 
 export default function Player({
   name,
+  hasWon = false,
   ping = NaN,
   pressedKeys = new PressedKeys(),
   snake = new Snake(),
@@ -18,6 +19,10 @@ export default function Player({
 
     get isAlive() {
       return snake.isAlive;
+    },
+
+    get hasWon() {
+      return hasWon;
     },
 
     get name() {
@@ -48,6 +53,10 @@ export default function Player({
       return token;
     },
 
+    setAsWinner() {
+      hasWon = true;
+    },
+
     registerPing() {
       lastPing = Number(new Date());
     },
@@ -59,10 +68,12 @@ export default function Player({
     reset() {
       pressedKeys = new PressedKeys();
       snake.reset();
+      hasWon = false;
     },
 
     fromJSON(json) {
       name = json.name;
+      hasWon = json.hasWon;
       ping = json.ping;
       pressedKeys.fromJSON(json.pressedKeys);
       snake.fromJSON(json.snake);
@@ -71,6 +82,7 @@ export default function Player({
     toJSON() {
       return {
         name,
+        hasWon,
         ping,
         pressedKeys: pressedKeys.toJSON(),
         snake: snake.toJSON()
