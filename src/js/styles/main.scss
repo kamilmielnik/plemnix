@@ -32,6 +32,13 @@ html, body {
     padding: 10px;
     background-image: url("/images/bg-dark.jpg");
 
+    input {
+      width: 100%;
+      background-color: white;
+      padding: 5px;
+      font-family: $font-family;
+    }
+
     #chat-box {
       margin-bottom: 20px;
 
@@ -52,15 +59,6 @@ html, body {
           padding: 5px;
           background-color: white;
           resize: none;
-          font-family: $font-family;
-        }
-      }
-
-      .input {
-        #chat-input {
-          width: 100%;
-          background-color: white;
-          padding: 5px;
           font-family: $font-family;
         }
       }

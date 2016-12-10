@@ -11,26 +11,34 @@
   <body>
     <main id="app">
       <div id="menu">
-        <div id="chat-box">
-          <div class="chat-messages">
-            <textarea id="chat" rows="10" disabled></textarea>
-          </div>
-
+        <div id="logged-out">
           <div class="input">
-            <input id="chat-input" placeholder="Press [Tab] to chat..." />
+            <input id="name-input" placeholder="Nickname..." />
           </div>
         </div>
 
-        <div id="players"></div>
+        <div id="logged-in" style="display: none;">
+          <div id="chat-box">
+            <div class="chat-messages">
+              <textarea id="chat" rows="10" disabled></textarea>
+            </div>
 
-        <div id="game-control-reset" class="button game-control">
-          Reset
-        </div>
+            <div class="input">
+              <input id="chat-input" placeholder="Press [Tab] to chat..." />
+            </div>
+          </div>
 
-        <div id="game-control-start-stop" class="button game-control">
-          Start
+          <div id="players"></div>
+
+          <div id="game-control-reset" class="button game-control">
+            Reset
+          </div>
+
+          <div id="game-control-start-stop" class="button game-control">
+            Start
+          </div>
         </div>
-      </div>
+        </div>
 
       <canvas id="game"></canvas>
     </main>

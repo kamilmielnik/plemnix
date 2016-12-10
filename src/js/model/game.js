@@ -2,14 +2,19 @@ import { WINNING_POINTS_TRESHOLD } from '../constants';
 import { Fruit, Player } from 'model';
 
 export default function Game() {
-  let hasBeenRan = false;
+  let isOver = false;
   let isRunning = false;
+  let hasBeenRan = false;
   let players = {};
   const fruit = Fruit.create();
 
   return {
     get fruit() {
       return fruit;
+    },
+
+    get isOver() {
+      return isOver;
     },
 
     get isRunning() {
@@ -89,6 +94,7 @@ export default function Game() {
     reset() {
       this.stop();
       hasBeenRan = false;
+      isOver = false;
       do {
         Object.values(players).forEach((player) => player.reset());
         handleSnakesCollisions();
@@ -115,6 +121,7 @@ export default function Game() {
       });
 
       players = updatedPlayers;
+      isOver = json.isOver;
       isRunning = json.isRunning;
       hasBeenRan = json.hasBeenRan;
     },
@@ -122,6 +129,7 @@ export default function Game() {
     toJSON() {
       return {
         fruit: fruit.toJSON(),
+        isOver,
         isRunning,
         hasBeenRan,
         players: Object.keys(players).reduce((json, key) => ({
@@ -188,5 +196,6 @@ export default function Game() {
     );
 
     isRunning = isEnoughPlayersAlive && highestScore < WINNING_POINTS_TRESHOLD;
+    isOver = !isRunning;
   }
 }

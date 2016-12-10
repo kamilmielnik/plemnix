@@ -1,8 +1,9 @@
 import { FruitView, SnakeView } from 'view';
 import { FIELD_HEIGHT, FIELD_WIDTH } from 'constants';
 
-const AWAITING_MESSAGE = 'Awaiting game';
+const AWAITING_MESSAGE = 'Awaiting players';
 const GAME_OVER_MESSAGE = 'Game over';
+const PAUSE_MESSAGE = 'Pause';
 const LARGE_MESSAGE_SIZE = 48;
 const MEDIUM_MESSAGE_SIZE = 38;
 
@@ -19,13 +20,15 @@ export default function GameView(game) {
 
       fruitView.paint(context);
 
-      if(!game.isRunning) {
+      if(game.isOver) {
         if(game.winner) {
           paintGameOverMessage(context);
           paintWinnerMessage(context);
         } else {
           paintAwaitingMessage(context);
         }
+      } else if(!game.isRunning) {
+        paintPauseMessage(context);
       }
     }
   };
@@ -50,5 +53,12 @@ export default function GameView(game) {
     context.font = `${LARGE_MESSAGE_SIZE}px Arial`;
     const { width: awaitingMessageWidth } = context.measureText(AWAITING_MESSAGE);
     context.fillText(AWAITING_MESSAGE, (FIELD_WIDTH - awaitingMessageWidth) / 2, FIELD_HEIGHT / 4);
+  }
+
+  function paintPauseMessage(context) {
+    context.fillStyle = 'black';
+    context.font = `${LARGE_MESSAGE_SIZE}px Arial`;
+    const { width: pauseMessageWidth } = context.measureText(PAUSE_MESSAGE);
+    context.fillText(PAUSE_MESSAGE, (FIELD_WIDTH - pauseMessageWidth) / 2, FIELD_HEIGHT / 4);
   }
 }

@@ -1,4 +1,4 @@
-import { SERVER_URL, SERVER_PORT } from '../constants';
+import { SERVER_PORT } from '../constants';
 import {
   MESSAGE_PONG, MESSAGE_CHAT,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
@@ -30,6 +30,10 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
   return {
     get token() {
       return token;
+    },
+
+    get isLoggedIn() {
+      return Boolean(token);
     },
 
     pong() {
@@ -134,7 +138,7 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
 }
 
 function connect(onOpen, onMessage) {
-  const ws = new WebSocket(`ws://${SERVER_URL}:${SERVER_PORT}`, null);
+  const ws = new WebSocket(`ws://${window.location.hostname}:${SERVER_PORT}`, null);
   ws.onopen = onOpen;
   ws.onerror = (error) => console.log('Error: ', error);
   ws.onmessage = (message) => {

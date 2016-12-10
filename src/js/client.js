@@ -6,7 +6,7 @@ import { KeysListener } from 'utils';
 import { MESSAGE_PING, MESSAGE_CHAT, MESSAGE_STATE_UPDATED } from 'api';
 import ApiClient from 'api/client';
 import { Chat, Game } from 'model';
-import { CanvasView, ChatView, GameView, GameControlView, PlayersView } from 'view';
+import { CanvasView, ChatView, GameView, GameControlView, LoginView, PlayersView } from 'view';
 
 main();
 
@@ -15,6 +15,7 @@ function main() {
   const chat = new Chat();
   game.fruit.hasBeenEaten = true;
   const chatView = new ChatView({ onSubmitMessage });
+  const loginView = new LoginView({ onSubmitName });
   const playersView = new PlayersView();
   const startStopView = new GameControlView({ onStartStopGame, onResetGame });
   const gameView = new GameView(game);
@@ -26,7 +27,6 @@ function main() {
   setInterval(updateMenu, 300);
 
   const apiClient = new ApiClient({
-    onOpen: () => apiClient.signIn('kamil'),
     customHandlers: {
       [MESSAGE_CHAT]: (ws, { name, message }) => {
         chat.say(name, message);
@@ -46,14 +46,14 @@ function main() {
 
   const keysListener = new KeysListener({
     onKeyDown({ key }) {
-      if(['ArrowLeft', 'ArrowRight'].includes(key)) {
+      if(['ArrowLeft', 'ArrowRight'].includes(key) && apiClient.isLoggedIn) {
         apiClient.pressKey(key);
         game.pressKey(apiClient.token, key);
       }
     },
 
     onKeyUp({ key }) {
-      if(['ArrowLeft', 'ArrowRight'].includes(key)) {
+      if(['ArrowLeft', 'ArrowRight'].includes(key) && apiClient.isLoggedIn) {
         apiClient.releaseKey(key);
         game.releaseKey(apiClient.token, key);
       }
@@ -63,6 +63,10 @@ function main() {
 
   function onSubmitMessage(message) {
     apiClient.chat(message);
+  }
+
+  function onSubmitName(name) {
+    apiClient.signIn(name);
   }
 
   function onStartStopGame() {
@@ -78,6 +82,7 @@ function main() {
   }
 
   function updateMenu() {
+    loginView.paint(apiClient.isLoggedIn);
     startStopView.paint(game.isRunning);
     chatView.paint(chat);
     playersView.paint(game.players);
