@@ -113,19 +113,20 @@ export default function Game() {
     fromJSON(json) {
       fruits = json[0].map(Fruit.fromJSON);
       const serverPlayers = Object.keys(json[4]);
-      const clientPlayers = Object.keys(players).filter((token) => serverPlayers.includes(token));
-      const newPlayers = serverPlayers.filter((token) => !clientPlayers.includes(token));
+      const clientPlayers = Object.keys(players).filter((id) => serverPlayers.includes(id));
+      const newPlayers = serverPlayers.filter((id) => !clientPlayers.includes(id));
 
       const updatedPlayers = {};
-      clientPlayers.forEach((token) => {
-        players[token].fromJSON(json[4][token]);
-        updatedPlayers[token] = players[token];
+      clientPlayers.forEach((id) => {
+        players[id].fromJSON(json[4][id]);
+        updatedPlayers[id] = players[id];
       });
-      newPlayers.forEach((token) => {
-        updatedPlayers[token] = new Player({
-          name: json[4][token].name
+      newPlayers.forEach((id) => {
+        updatedPlayers[id] = new Player({
+          id: json[4][id][0],
+          name: json[4][id][1]
         });
-        updatedPlayers[token].fromJSON(json[4][token]);
+        updatedPlayers[id].fromJSON(json[4][id]);
       });
 
       players = updatedPlayers;
@@ -142,7 +143,7 @@ export default function Game() {
         hasStarted ? 1 : 0,
         Object.keys(players).reduce((json, key) => ({
           ...json,
-          [key]: players[key].toJSON()
+          [players[key].id]: players[key].toJSON()
         }), {})
       ];
     }

@@ -48,7 +48,7 @@ function main() {
         game.deletePlayer(token);
       });
       socket.on('error', (args) => console.log('connection error', token, args));
-      socket.send(createSignInResponseMessage(token).serialize());
+      socket.send(createSignInResponseMessage(token, player.id).serialize());
       setTimeout(ping, 10);
       const pingSyncInterval = setInterval(ping, PING_SYNC_TIME);
 
@@ -119,11 +119,12 @@ function createChatMessage(name, message) {
   });
 }
 
-function createSignInResponseMessage(token) {
+function createSignInResponseMessage(token, id) {
   return new Message({
     type: MESSAGE_SIGN_IN_RESPONSE,
     payload: {
-      token
+      token,
+      id
     }
   });
 }

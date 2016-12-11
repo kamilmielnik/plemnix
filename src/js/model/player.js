@@ -1,7 +1,10 @@
 import { generateToken, PressedKeys } from 'utils';
 import { Snake } from 'model';
 
+let nextId = 0;
+
 export default function Player({
+  id = nextId++,
   name,
   hasWon = false,
   ping = NaN,
@@ -13,6 +16,10 @@ export default function Player({
   let lastPing = null;
 
   return {
+    get id() {
+      return id;
+    },
+
     get color() {
       return snake.color;
     },
@@ -76,15 +83,17 @@ export default function Player({
     },
 
     fromJSON(json) {
-      name = json[0];
-      hasWon = json[1] === 1 ? true : false;
-      ping = json[2];
-      pressedKeys.fromJSON(json[3]);
-      snake.fromJSON(json[4]);
+      id = json[0];
+      name = json[1];
+      hasWon = json[2] === 1 ? true : false;
+      ping = json[3];
+      pressedKeys.fromJSON(json[4]);
+      snake.fromJSON(json[5]);
     },
 
     toJSON() {
       return [
+        id,
         name,
         hasWon ? 1 : 0,
         ping,

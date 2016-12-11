@@ -47,14 +47,14 @@ function main() {
     onKeyDown({ key }) {
       if(['ArrowLeft', 'ArrowRight'].includes(key) && apiClient.isLoggedIn) {
         apiClient.pressKey(key);
-        game.pressKey(apiClient.token, key);
+        game.pressKey(apiClient.id, key);
       }
     },
 
     onKeyUp({ key }) {
       if(['ArrowLeft', 'ArrowRight'].includes(key) && apiClient.isLoggedIn) {
         apiClient.releaseKey(key);
-        game.releaseKey(apiClient.token, key);
+        game.releaseKey(apiClient.id, key);
       }
     }
   });

@@ -9,11 +9,13 @@ import Message from './message';
 
 export default function ApiClient({ onOpen, customHandlers = {} }) {
   let token = null;
+  let id = null;
   const handlers = {
     ...customHandlers,
 
-    [MESSAGE_SIGN_IN_RESPONSE]: (ws, { token: apiToken }) => {
+    [MESSAGE_SIGN_IN_RESPONSE]: (ws, { token: apiToken, id: playerId }) => {
       token = apiToken;
+      id = playerId;
     }
   };
 
@@ -30,6 +32,10 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
   return {
     get token() {
       return token;
+    },
+
+    get id() {
+      return id;
     },
 
     get isLoggedIn() {
