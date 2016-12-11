@@ -5,7 +5,7 @@ import {
 } from '../constants';
 import { Fruit, Player } from 'model';
 
-export default function Game() {
+export default function Game({ onAddFruit } = {}) {
   let isOver = true;
   let isRunning = false;
   let hasStarted = false;
@@ -183,9 +183,11 @@ export default function Game() {
 
   function addFruit() {
     if(__SERVER__) {
-      fruits.push(Fruit.create());
+      const fruit = Fruit.create();
+      fruits.push(fruit);
       clearTimeout(addFruitTimeout);
       addFruitTimeout = setTimeout(addFruit, getRandomFruitTimeout());
+      onAddFruit(fruit);
     }
   }
 

@@ -19,7 +19,8 @@ export const WINNING_POINTS_TRESHOLD = 1000;
 /* server-specific */
 export const CONNECTION_ESTABLISHED = 1;
 export const CHAT_SYNC_TIME = 1000 / 8;
-export const GAME_SYNC_TIME = 1000 / 12;
+export const GAME_SYNC_TIME = 10000;
+export const SNAKES_SYNC_TIME = 1000 / 12;
 export const PING_SYNC_TIME = 2500;
 export const PLAYER_INFO_SYNC_TIME = PING_SYNC_TIME;
 

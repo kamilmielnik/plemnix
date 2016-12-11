@@ -20,7 +20,7 @@ main();
 
 function main() {
   const { server, wsServer } = createServers();
-  const game = new Game();
+  const game = new Game({ onAddFruit });
   const handlers = {
     [MESSAGE_CHAT]: (socket, token, { message }) => {
       const { name } = game.players[token];
@@ -127,11 +127,17 @@ function main() {
         message: createFruitsUpdatedMessage(eatenFruits, newFruits).serialize()
       });
     }
-
   }, SNAKE_MOVE_TIME);
 
   setInterval(broadcastStateUpdate, GAME_SYNC_TIME);
   setInterval(broadcastPlayersInfoUpdate, PLAYER_INFO_SYNC_TIME);
+
+  function onAddFruit(fruit) {
+    broadcast({
+      wsServer,
+      message: createFruitsUpdatedMessage([], [fruit]).serialize()
+    });
+  }
 
   function broadcastPlayersInfoUpdate() {
     broadcast({

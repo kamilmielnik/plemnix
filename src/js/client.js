@@ -78,14 +78,18 @@ function main() {
   const keysListener = new KeysListener({
     onKeyDown({ key }) {
       if(['ArrowLeft', 'ArrowRight'].includes(key) && apiClient.isLoggedIn) {
-        apiClient.pressKey(key);
+        if (!game.players[apiClient.id].pressedKeys.isPressed(key)) {
+          apiClient.pressKey(key);
+        }
         game.pressKey(apiClient.id, key);
       }
     },
 
     onKeyUp({ key }) {
       if(['ArrowLeft', 'ArrowRight'].includes(key) && apiClient.isLoggedIn) {
-        apiClient.releaseKey(key);
+        if (game.players[apiClient.id].pressedKeys.isPressed(key)) {
+          apiClient.releaseKey(key);
+        }
         game.releaseKey(apiClient.id, key);
       }
     }
