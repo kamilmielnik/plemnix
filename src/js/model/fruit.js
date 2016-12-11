@@ -33,19 +33,22 @@ export default function Fruit({ color, hasBeenEaten, point, size }) {
     },
 
     fromJSON(json) {
-      color = json.color;
-      hasBeenEaten = json.hasBeenEaten;
-      point = json.point;
-      size = json.size;
+      color = json[0];
+      hasBeenEaten = json[1] === 1 ? true : false;
+      point = {
+        x: json[2][0],
+        y: json[2][1]
+      };
+      size = json[3];
     },
 
     toJSON() {
-      return {
+      return [
         color,
-        hasBeenEaten,
-        point,
+        hasBeenEaten ? 1 : 0,
+        [point.x, point.y],
         size
-      };
+      ];
     }
   };
 }
@@ -59,6 +62,16 @@ Fruit.create = () => {
     size
   });
 };
+
+Fruit.fromJSON = (json) => new Fruit({
+  color: json[0],
+  hasBeenEaten: json[1] === 1 ? true : false,
+  point: {
+    x: json[2][0],
+    y: json[2][1]
+  },
+  size: json[3]
+});
 
 function getRandomPoint(size) {
   return {

@@ -76,21 +76,21 @@ export default function Player({
     },
 
     fromJSON(json) {
-      name = json.name;
-      hasWon = json.hasWon;
-      ping = json.ping;
-      pressedKeys.fromJSON(json.pressedKeys);
-      snake.fromJSON(json.snake);
+      name = json[0];
+      hasWon = json[1] === 1 ? true : false;
+      ping = json[2];
+      pressedKeys.fromJSON(json[3]);
+      snake.fromJSON(json[4]);
     },
 
     toJSON() {
-      return {
+      return [
         name,
-        hasWon,
+        hasWon ? 1 : 0,
         ping,
-        pressedKeys: pressedKeys.toJSON(),
-        snake: snake.toJSON()
-      };
+        pressedKeys.toJSON(),
+        snake.toJSON()
+      ];
     }
   };
 }

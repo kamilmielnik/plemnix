@@ -87,21 +87,28 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
     },
 
     fromJSON(json) {
-      color = json.color;
-      direction = json.direction;
-      isAlive = json.isAlive;
-      points = json.points;
-      pointsToAdd = json.pointsToAdd;
+      color = json[0];
+      direction = json[1];
+      isAlive = json[2] === 1 ? true : false;
+      const y = json[3][1];
+      points = json[3][0].reduce((pts, x, index) => {
+        pts.push({ x, y: y[index] });
+        return pts;
+      }, []);
+      pointsToAdd = json[4];
     },
 
     toJSON() {
-      return {
+      return [
         color,
         direction,
-        isAlive,
-        points,
+        isAlive ? 1 : 0,
+        [
+          points.map(({ x }) => x),
+          points.map(({ y }) => y)
+        ],
         pointsToAdd
-      };
+      ];
     }
   };
 }

@@ -15,11 +15,14 @@ export default function PressedKeys() {
     },
 
     fromJSON(json) {
-      keys = json;
+      keys = {};
+      json.forEach((key) => {
+        keys[key] = true;
+      });
     },
 
     toJSON() {
-      return keys;
+      return Object.keys(keys).filter((key) => keys[key]);
     }
   };
 }

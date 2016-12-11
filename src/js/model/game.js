@@ -111,40 +111,40 @@ export default function Game() {
     },
 
     fromJSON(json) {
-      fruits = json.fruits.map((fruit) => new Fruit(fruit));
-      const serverPlayers = Object.keys(json.players);
+      fruits = json[0].map(Fruit.fromJSON);
+      const serverPlayers = Object.keys(json[4]);
       const clientPlayers = Object.keys(players).filter((token) => serverPlayers.includes(token));
       const newPlayers = serverPlayers.filter((token) => !clientPlayers.includes(token));
 
       const updatedPlayers = {};
       clientPlayers.forEach((token) => {
-        players[token].fromJSON(json.players[token]);
+        players[token].fromJSON(json[4][token]);
         updatedPlayers[token] = players[token];
       });
       newPlayers.forEach((token) => {
         updatedPlayers[token] = new Player({
-          name: json.players[token].name
+          name: json[4][token].name
         });
-        updatedPlayers[token].fromJSON(json.players[token]);
+        updatedPlayers[token].fromJSON(json[4][token]);
       });
 
       players = updatedPlayers;
-      isOver = json.isOver;
-      isRunning = json.isRunning;
-      hasStarted = json.hasStarted;
+      isOver = json[1] === 1 ? true : false;
+      isRunning = json[2] === 1 ? true : false;
+      hasStarted = json[3] === 1 ? true : false;
     },
 
     toJSON() {
-      return {
-        fruits: fruits.map((fruit) => fruit.toJSON()),
-        isOver,
-        isRunning,
-        hasStarted,
-        players: Object.keys(players).reduce((json, key) => ({
+      return [
+        fruits.map((fruit) => fruit.toJSON()),
+        isOver ? 1 : 0,
+        isRunning ? 1 : 0,
+        hasStarted ? 1 : 0,
+        Object.keys(players).reduce((json, key) => ({
           ...json,
           [key]: players[key].toJSON()
         }), {})
-      };
+      ];
     }
   };
 
