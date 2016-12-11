@@ -84,7 +84,7 @@ export default function Game() {
 
     start() {
       this.startClient();
-      addFruitTimeout = setTimeout(addFruit);
+      addFruitTimeout = setTimeout(addFruit, getRandomFruitTimeout(0, MAX_FRUIT_REGENERATE_TIMEOUT / 2));
     },
 
     startClient() {
@@ -175,10 +175,13 @@ export default function Game() {
   function addFruit() {
     if(__SERVER__) {
       fruits.push(Fruit.create());
-      const timeout = (MAX_FRUIT_REGENERATE_TIMEOUT - MIN_FRUIT_REGENERATE_TIMEOUT) * Math.random() + MIN_FRUIT_REGENERATE_TIMEOUT;
       clearTimeout(addFruitTimeout);
-      addFruitTimeout = setTimeout(addFruit, timeout);
+      addFruitTimeout = setTimeout(addFruit, getRandomFruitTimeout());
     }
+  }
+
+  function getRandomFruitTimeout(min = MIN_FRUIT_REGENERATE_TIMEOUT, max = MAX_FRUIT_REGENERATE_TIMEOUT) {
+    return (max - min) * Math.random() + min;
   }
 
   function moveSnakes() {
@@ -233,6 +236,7 @@ export default function Game() {
     if(isOver) {
       clearTimeout(addFruitTimeout);
     }
+    Object.values(players).forEach((player) => player.setAsLoser());
     if(winner) {
       winner.setAsWinner();
     }

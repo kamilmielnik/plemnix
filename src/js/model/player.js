@@ -57,6 +57,10 @@ export default function Player({
       hasWon = true;
     },
 
+    setAsLoser() {
+      hasWon = false;
+    },
+
     registerPing() {
       lastPing = Number(new Date());
     },
