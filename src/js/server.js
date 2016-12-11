@@ -3,7 +3,7 @@ import { Server as WebSocketServer } from 'ws';
 import http from 'http';
 import {
   SERVER_PORT,
-  GAME_SYNC_TIME, PING_SYNC_TIME, SNAKE_MOVE_TIME
+  GAME_SYNC_TIME, PING_SYNC_TIME, PLAYER_INFO_SYNC_TIME, SNAKE_MOVE_TIME
 } from './constants';
 import {
   Message,
@@ -12,7 +12,7 @@ import {
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
   MESSAGE_GAME_START, MESSAGE_GAME_STOP, MESSAGE_GAME_RESET,
   MESSAGE_PLAYER_LEFT,
-  MESSAGE_FRUITS_UPDATED, MESSAGE_STATE_UPDATED
+  MESSAGE_FRUITS_UPDATED, MESSAGE_PLAYERS_INFO_UPDATED, MESSAGE_STATE_UPDATED
 } from './api';
 import { Game, Player } from './model';
 
@@ -129,7 +129,16 @@ function main() {
     }
 
   }, SNAKE_MOVE_TIME);
+
   setInterval(broadcastStateUpdate, GAME_SYNC_TIME);
+  setInterval(broadcastPlayersInfoUpdate, PLAYER_INFO_SYNC_TIME);
+
+  function broadcastPlayersInfoUpdate() {
+    broadcast({
+      wsServer,
+      message: createPlayersInfoUpdatedMessage(game.players).serialize()
+    });
+  }
 
   function broadcastStateUpdate() {
     broadcast({
@@ -172,6 +181,18 @@ function createFruitsUpdatedMessage(eatenFruits, newFruits) {
       eatenFruits.map(({ id }) => id),
       newFruits.map((fruit) => fruit.toJSON())
     ]
+  });
+}
+
+function createPlayersInfoUpdatedMessage(players) {
+  return new Message({
+    type: MESSAGE_PLAYERS_INFO_UPDATED,
+    payload: {
+      players: Object.values(players).reduce((payload, { id, ping }) => {
+        payload[id] = [ping];
+        return payload;
+      }, {})
+    }
   });
 }
 

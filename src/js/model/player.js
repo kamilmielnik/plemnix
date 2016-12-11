@@ -60,6 +60,10 @@ export default function Player({
       return token;
     },
 
+    set ping(value) {
+      ping = value;
+    },
+
     setAsWinner() {
       hasWon = true;
     },

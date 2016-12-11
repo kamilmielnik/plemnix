@@ -8,7 +8,7 @@ import {
   MESSAGE_GAME_START,
   MESSAGE_GAME_STOP,
   MESSAGE_PLAYER_LEFT,
-  MESSAGE_FRUITS_UPDATED, MESSAGE_STATE_UPDATED
+  MESSAGE_FRUITS_UPDATED, MESSAGE_PLAYERS_INFO_UPDATED, MESSAGE_STATE_UPDATED
 } from 'api';
 import ApiClient from 'api/client';
 import { Chat, Fruit, Game } from 'model';
@@ -57,6 +57,14 @@ function main() {
         const [eatenFruitsIds, newFruits] = payload;
         game.deleteFruits(eatenFruitsIds);
         game.addFruits(newFruits.map(Fruit.fromJSON));
+      },
+
+      [MESSAGE_PLAYERS_INFO_UPDATED]: (ws, { players }) => {
+        Object.keys(players).forEach((key) => {
+          const serverPlayer = players[key];
+          const player = game.players[key];
+          player.ping = serverPlayer[0];
+        });
       },
 
       [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
