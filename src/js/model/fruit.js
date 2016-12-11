@@ -5,8 +5,14 @@ import {
 } from '../constants';
 import { pointInCircle } from '../utils';
 
-export default function Fruit({ color, hasBeenEaten, point, size }) {
+let nextId = 0;
+
+export default function Fruit({ id = nextId++, color, hasBeenEaten, point, size }) {
   return {
+    get id() {
+      return id;
+    },
+
     get color() {
       return color;
     },
@@ -33,17 +39,19 @@ export default function Fruit({ color, hasBeenEaten, point, size }) {
     },
 
     fromJSON(json) {
-      color = json[0];
-      hasBeenEaten = json[1] === 1 ? true : false;
+      id = json[0];
+      color = json[1];
+      hasBeenEaten = json[2] === 1 ? true : false;
       point = {
-        x: json[2][0],
-        y: json[2][1]
+        x: json[3][0],
+        y: json[3][1]
       };
-      size = json[3];
+      size = json[4];
     },
 
     toJSON() {
       return [
+        id,
         color,
         hasBeenEaten ? 1 : 0,
         [point.x, point.y],
@@ -64,13 +72,14 @@ Fruit.create = () => {
 };
 
 Fruit.fromJSON = (json) => new Fruit({
-  color: json[0],
-  hasBeenEaten: json[1] === 1 ? true : false,
+  id: json[0],
+  color: json[1],
+  hasBeenEaten: json[2] === 1 ? true : false,
   point: {
-    x: json[2][0],
-    y: json[2][1]
+    x: json[3][0],
+    y: json[3][1]
   },
-  size: json[3]
+  size: json[4]
 });
 
 function getRandomPoint(size) {

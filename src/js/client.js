@@ -8,10 +8,10 @@ import {
   MESSAGE_GAME_START,
   MESSAGE_GAME_STOP,
   MESSAGE_PLAYER_LEFT,
-  MESSAGE_STATE_UPDATED
+  MESSAGE_FRUITS_UPDATED, MESSAGE_STATE_UPDATED
 } from 'api';
 import ApiClient from 'api/client';
-import { Chat, Game } from 'model';
+import { Chat, Fruit, Game } from 'model';
 import { CanvasView, ChatView, GameView, GameControlView, LoginView, PlayersView } from 'view';
 
 main();
@@ -51,6 +51,12 @@ function main() {
 
       [MESSAGE_PLAYER_LEFT]: (ws, { id }) => {
         game.deletePlayer(id);
+      },
+
+      [MESSAGE_FRUITS_UPDATED]: (ws, payload) => {
+        const [eatenFruitsIds, newFruits] = payload;
+        game.deleteFruits(eatenFruitsIds);
+        game.addFruits(newFruits.map(Fruit.fromJSON));
       },
 
       [MESSAGE_STATE_UPDATED]: (ws, { state }) => {

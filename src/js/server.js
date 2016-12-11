@@ -12,7 +12,7 @@ import {
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
   MESSAGE_GAME_START, MESSAGE_GAME_STOP, MESSAGE_GAME_RESET,
   MESSAGE_PLAYER_LEFT,
-  MESSAGE_STATE_UPDATED
+  MESSAGE_FRUITS_UPDATED, MESSAGE_STATE_UPDATED
 } from './api';
 import { Game, Player } from './model';
 
@@ -115,7 +115,20 @@ function main() {
     });
   });
 
-  setInterval(() => game.stepServer(), SNAKE_MOVE_TIME);
+  setInterval(() => {
+    const oldFruits = [...game.fruits];
+    game.stepServer();
+    const eatenFruits = oldFruits.filter((fruit) => !game.fruits.includes(fruit));
+    const newFruits = game.fruits.filter((fruit) => !oldFruits.includes(fruit));
+
+    if(eatenFruits.length || newFruits.length) {
+      broadcast({
+        wsServer,
+        message: createFruitsUpdatedMessage(eatenFruits, newFruits).serialize()
+      });
+    }
+
+  }, SNAKE_MOVE_TIME);
   setInterval(broadcastStateUpdate, GAME_SYNC_TIME);
 
   function broadcastStateUpdate() {
@@ -149,6 +162,16 @@ function createSignInResponseMessage(token, id) {
       token,
       id
     }
+  });
+}
+
+function createFruitsUpdatedMessage(eatenFruits, newFruits) {
+  return new Message({
+    type: MESSAGE_FRUITS_UPDATED,
+    payload: [
+      eatenFruits.map(({ id }) => id),
+      newFruits.map((fruit) => fruit.toJSON())
+    ]
   });
 }
 

@@ -10,7 +10,7 @@ export default function Game() {
   let isRunning = false;
   let hasStarted = false;
   let players = {};
-  let fruits = [Fruit.create()];
+  let fruits = __SERVER__ ? [Fruit.create()] : [];
   let addFruitTimeout = null;
 
   return {
@@ -44,6 +44,14 @@ export default function Game() {
 
     deletePlayer(token) {
       Reflect.deleteProperty(players, token);
+    },
+
+    addFruits(newFruits) {
+      newFruits.forEach((fruit) => fruits.push(fruit));
+    },
+
+    deleteFruits(eatenFruitsIds) {
+      fruits = fruits.filter(({ id }) => !eatenFruitsIds.includes(id));
     },
 
     ping(token) {
@@ -107,7 +115,7 @@ export default function Game() {
         handleSnakesCollisions();
       } while (Object.values(players).some(({ isAlive }) => !isAlive));
       clearTimeout(addFruitTimeout);
-      fruits = [Fruit.create()];
+      fruits = __SERVER__ ? [Fruit.create()] : [];
     },
 
     fromJSON(json) {
