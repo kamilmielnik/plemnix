@@ -11,9 +11,10 @@ import {
   MESSAGE_SIGN_IN, MESSAGE_SIGN_IN_RESPONSE,
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
   MESSAGE_GAME_START, MESSAGE_GAME_STOP, MESSAGE_GAME_RESET,
+  MESSAGE_PLAYER_LEFT,
   MESSAGE_STATE_UPDATED
 } from './api';
-import { Game, Player, Snake } from './model';
+import { Game, Player } from './model';
 
 main();
 
@@ -34,27 +35,35 @@ function main() {
     },
 
     [MESSAGE_SIGN_IN]: (socket, _, { name }) => {
-      const player = new Player({
-        name,
-        snake: Snake.create(),
-        socket
-      });
+      const player = new Player({ name, socket });
       const { token } = player;
       game.addPlayer(token, player);
       socket.token = token;
-      socket.on('close', (args) => {
-        console.log('closing connection', token, args);
-        clearInterval(pingSyncInterval);
-        game.deletePlayer(token);
-      });
-      socket.on('error', (args) => console.log('connection error', token, args));
+      socket.on('close', onCloseConnection);
+      socket.on('error', onError);
       socket.send(createSignInResponseMessage(token, player.id).serialize());
-      setTimeout(ping, 10);
       const pingSyncInterval = setInterval(ping, PING_SYNC_TIME);
+      broadcastStateUpdate();
 
       function ping() {
         game.ping(token);
         socket.send(createPingMessage().serialize());
+      }
+
+      function onCloseConnection(args) {
+        console.log('closing connection', token, args);
+        clearInterval(pingSyncInterval);
+        const { id } = game.players[token];
+        game.deletePlayer(token);
+
+        broadcast({
+          wsServer,
+          message: createPlayerLeftMessage(id).serialize()
+        });
+      }
+
+      function onError(args) {
+        console.log('connection error', token, args);
       }
     },
 
@@ -68,14 +77,24 @@ function main() {
 
     [MESSAGE_GAME_START]: () => {
       game.start();
+      broadcast({
+        wsServer,
+        message: createGameStartMessage().serialize()
+      });
     },
 
     [MESSAGE_GAME_STOP]: () => {
       game.stop();
+      broadcast({
+        wsServer,
+        message: createGameStopMessage().serialize()
+      });
+      broadcastStateUpdate();
     },
 
     [MESSAGE_GAME_RESET]: () => {
       game.reset();
+      broadcastStateUpdate();
     }
   };
 
@@ -97,10 +116,14 @@ function main() {
   });
 
   setInterval(() => game.stepServer(), SNAKE_MOVE_TIME);
-  setInterval(() => broadcast({
-    wsServer,
-    message: createStateUpdatedMessage(game.toJSON()).serialize()
-  }), GAME_SYNC_TIME);
+  setInterval(broadcastStateUpdate, GAME_SYNC_TIME);
+
+  function broadcastStateUpdate() {
+    broadcast({
+      wsServer,
+      message: createStateUpdatedMessage(game.toJSON()).serialize()
+    });
+  }
 }
 
 function createPingMessage() {
@@ -134,6 +157,27 @@ function createStateUpdatedMessage(state) {
     type: MESSAGE_STATE_UPDATED,
     payload: {
       state
+    }
+  });
+}
+
+function createGameStartMessage() {
+  return new Message({
+    type: MESSAGE_GAME_START
+  });
+}
+
+function createGameStopMessage() {
+  return new Message({
+    type: MESSAGE_GAME_STOP
+  });
+}
+
+function createPlayerLeftMessage(id) {
+  return new Message({
+    type: MESSAGE_PLAYER_LEFT,
+    payload: {
+      id
     }
   });
 }

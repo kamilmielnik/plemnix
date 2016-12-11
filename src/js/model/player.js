@@ -9,7 +9,7 @@ export default function Player({
   hasWon = false,
   ping = NaN,
   pressedKeys = new PressedKeys(),
-  snake = new Snake(),
+  snake = Snake.create(),
   socket,
   token = generateToken()
 }) {

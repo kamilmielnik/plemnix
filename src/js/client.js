@@ -3,7 +3,13 @@ import 'node-normalize-scss/_normalize.scss';
 import 'styles/main.scss';
 import { FIELD_HEIGHT, FIELD_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { KeysListener } from 'utils';
-import { MESSAGE_PING, MESSAGE_CHAT, MESSAGE_STATE_UPDATED } from 'api';
+import {
+  MESSAGE_PING, MESSAGE_CHAT,
+  MESSAGE_GAME_START,
+  MESSAGE_GAME_STOP,
+  MESSAGE_PLAYER_LEFT,
+  MESSAGE_STATE_UPDATED
+} from 'api';
 import ApiClient from 'api/client';
 import { Chat, Game } from 'model';
 import { CanvasView, ChatView, GameView, GameControlView, LoginView, PlayersView } from 'view';
@@ -33,6 +39,18 @@ function main() {
 
       [MESSAGE_PING]: () => {
         apiClient.pong();
+      },
+
+      [MESSAGE_GAME_START]: () => {
+        game.startClient();
+      },
+
+      [MESSAGE_GAME_STOP]: () => {
+        game.stop();
+      },
+
+      [MESSAGE_PLAYER_LEFT]: (ws, { id }) => {
+        game.deletePlayer(id);
       },
 
       [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
