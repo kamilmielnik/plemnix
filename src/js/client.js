@@ -13,7 +13,6 @@ main();
 function main() {
   const game = new Game();
   const chat = new Chat();
-  game.fruit.hasBeenEaten = true;
   const chatView = new ChatView({ onSubmitMessage });
   const loginView = new LoginView({ onSubmitName });
   const playersView = new PlayersView();

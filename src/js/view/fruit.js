@@ -1,5 +1,3 @@
-import { FRUIT_RADIUS } from 'constants';
-
 export default function FruitView(fruit) {
   return {
     paint(context) {
@@ -7,10 +5,10 @@ export default function FruitView(fruit) {
         return;
       }
 
-      const { color, point } = fruit;
+      const { color, point, size } = fruit;
       context.beginPath();
       context.strokeStyle = color;
-      context.ellipse(point.x, point.y, FRUIT_RADIUS, FRUIT_RADIUS, 0, 0, 2 * Math.PI);
+      context.ellipse(point.x, point.y, size, size, 0, 0, 2 * Math.PI);
       context.fillStyle = color;
       context.fill();
       context.stroke();

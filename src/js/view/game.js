@@ -8,8 +8,6 @@ const LARGE_MESSAGE_SIZE = 48;
 const MEDIUM_MESSAGE_SIZE = 38;
 
 export default function GameView(game) {
-  const fruitView = new FruitView(game.fruit);
-
   return {
     paint(context) {
       game.forEachPlayer((player) => {
@@ -17,10 +15,15 @@ export default function GameView(game) {
         const snakeView = new SnakeView(snake);
         snakeView.paint(context);
       });
-      fruitView.paint(context);
+      paintFruits(context);
       paintMessages(context);
     }
   };
+
+  function paintFruits(context) {
+    const fruitViews = game.fruits.map((fruit) => new FruitView(fruit));
+    fruitViews.forEach((fruitView) => fruitView.paint(context));
+  }
 
   function paintMessages(context) {
     if(!game.isRunning) {

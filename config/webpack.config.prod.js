@@ -18,7 +18,7 @@ const sassLoaders = [
   'sass-loader?outputStyle=compressed'
 ];
 
-const commonConfig = {
+const commonConfig = ({ isClient }) => ({
   stats: {
     colors: true
   },
@@ -66,6 +66,8 @@ const commonConfig = {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
+      __CLIENT__: isClient,
+      __SERVER__: !isClient,
       __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
@@ -83,10 +85,10 @@ const commonConfig = {
     })
   ],
   devtool: 'source-map'
-};
+});
 
 module.exports = [
-  Object.assign({}, commonConfig, {
+  Object.assign({}, commonConfig({ isClient: true }), {
     name: 'client',
     entry: path.resolve(PATHS.app, 'client.js'),
     target: 'web',
@@ -96,7 +98,7 @@ module.exports = [
       publicPath: '/'
     }
   }),
-  Object.assign({}, commonConfig, {
+  Object.assign({}, commonConfig({ isClient: false }), {
     name: 'server',
     entry: path.resolve(PATHS.app, 'server.js'),
     target: 'node',

@@ -1,4 +1,8 @@
-import { WINNING_POINTS_TRESHOLD } from '../constants';
+import {
+  MIN_FRUIT_REGENERATE_TIMEOUT,
+  MAX_FRUIT_REGENERATE_TIMEOUT,
+  WINNING_POINTS_TRESHOLD
+} from '../constants';
 import { Fruit, Player } from 'model';
 
 export default function Game() {
@@ -6,11 +10,12 @@ export default function Game() {
   let isRunning = false;
   let hasStarted = false;
   let players = {};
-  const fruit = Fruit.create();
+  let fruits = [Fruit.create()];
+  let addFruitTimeout = null;
 
   return {
-    get fruit() {
-      return fruit;
+    get fruits() {
+      return fruits;
     },
 
     get isOver() {
@@ -67,7 +72,7 @@ export default function Game() {
       if(isRunning) {
         handleKeyboardInput();
         moveSnakes();
-        handleFruitCollisions();
+        handleFruitsCollisions();
         handleSnakesCollisions();
         handleGameEnd();
       }
@@ -75,12 +80,14 @@ export default function Game() {
 
     stepServer() {
       this.step();
-      if(fruit.hasBeenEaten) {
-        fruit.revive();
-      }
     },
 
     start() {
+      this.startClient();
+      addFruitTimeout = setTimeout(addFruit);
+    },
+
+    startClient() {
       isRunning = true;
       hasStarted = true;
       isOver = false;
@@ -88,6 +95,7 @@ export default function Game() {
 
     stop() {
       isRunning = false;
+      clearTimeout(addFruitTimeout);
     },
 
     reset() {
@@ -98,11 +106,12 @@ export default function Game() {
         Object.values(players).forEach((player) => player.reset());
         handleSnakesCollisions();
       } while (Object.values(players).some(({ isAlive }) => !isAlive));
-      fruit.reset();
+      clearTimeout(addFruitTimeout);
+      fruits = [Fruit.create()];
     },
 
     fromJSON(json) {
-      fruit.fromJSON(json.fruit);
+      fruits = json.fruits.map((fruit) => new Fruit(fruit));
       const serverPlayers = Object.keys(json.players);
       const clientPlayers = Object.keys(players).filter((token) => serverPlayers.includes(token));
       const newPlayers = serverPlayers.filter((token) => !clientPlayers.includes(token));
@@ -127,7 +136,7 @@ export default function Game() {
 
     toJSON() {
       return {
-        fruit: fruit.toJSON(),
+        fruits: fruits.map((fruit) => fruit.toJSON()),
         isOver,
         isRunning,
         hasStarted,
@@ -163,22 +172,36 @@ export default function Game() {
     });
   }
 
+  function addFruit() {
+    if(__SERVER__) {
+      fruits.push(Fruit.create());
+      const timeout = (MAX_FRUIT_REGENERATE_TIMEOUT - MIN_FRUIT_REGENERATE_TIMEOUT) * Math.random() + MIN_FRUIT_REGENERATE_TIMEOUT;
+      clearTimeout(addFruitTimeout);
+      addFruitTimeout = setTimeout(addFruit, timeout);
+    }
+  }
+
   function moveSnakes() {
     Object.values(players).forEach(({ snake }) => snake.step());
   }
 
-  function handleFruitCollisions() {
-    if(fruit.hasBeenEaten) {
-      return;
-    }
+  function handleFruitsCollisions() {
+    fruits
+      .filter(({ hasBeenEaten }) => !hasBeenEaten)
+      .forEach((fruit) => {
+        Object.values(players).forEach((player) => {
+          const { snake } = player;
+          if(fruit.collidesWithSnakeHead(snake)) {
+            snake.eatFruit(fruit);
+            fruit.hasBeenEaten = true;
+          }
+        });
+      });
 
-    Object.values(players).forEach((player) => {
-      const { snake } = player;
-      if(fruit.collidesWithSnakeHead(snake)) {
-        snake.eatFruit(fruit);
-        fruit.hasBeenEaten = true;
-      }
-    });
+    fruits = fruits.filter(({ hasBeenEaten }) => !hasBeenEaten);
+    if(fruits.length === 0) {
+      addFruit();
+    }
   }
 
   function handleSnakesCollisions() {
@@ -207,6 +230,9 @@ export default function Game() {
     isRunning = isEnoughPlayersAlive && highestScore < WINNING_POINTS_TRESHOLD;
     isOver = !isRunning;
     const winner = getWinner();
+    if(isOver) {
+      clearTimeout(addFruitTimeout);
+    }
     if(winner) {
       winner.setAsWinner();
     }

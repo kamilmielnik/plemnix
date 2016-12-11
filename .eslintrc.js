@@ -21,7 +21,9 @@ module.exports = {
 
   'globals': {
     'define': true,
-    'API_URL': true
+    'API_URL': true,
+    '__SERVER__': true,
+    '__CLIENT__': true
   },
 
   'import/ignore': [

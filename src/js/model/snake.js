@@ -1,6 +1,6 @@
 import { getRandomColor, pointInCircle } from 'utils';
 import {
-  FIELD_WIDTH, FIELD_HEIGHT, FRUIT_VALUE, INITIAL_SNAKE_LENGTH,
+  FIELD_WIDTH, FIELD_HEIGHT, INITIAL_SNAKE_LENGTH,
   MIN_POINTS_TO_COMPUTE_SELF_COLLISIONS,
   SNAKE_HEAD_RADIUS, SNAKE_STEP_LENGTH, SNAKE_TURN_ANGLE
 } from '../constants';
@@ -31,8 +31,8 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
       return points.length + pointsToAdd - INITIAL_SNAKE_LENGTH;
     },
 
-    eatFruit() {
-      pointsToAdd += FRUIT_VALUE;
+    eatFruit(fruit) {
+      pointsToAdd += fruit.size;
     },
 
     hasCrashedIntoSnake(snake) {
