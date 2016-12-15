@@ -93,7 +93,7 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
       pointsToAdd = json[2];
       const numberOfPoints = json[3];
       const headPoints = json[4][0].map((x, index) => ({ x, y: json[4][1][index] }));
-      if (headPoints.length > 0) {
+      if(headPoints.length > 0) {
         const firstHeadPoint = headPoints[0];
         const firstHeadPointIndexInSnake = points.findIndex(
           ({ x, y }) => x === firstHeadPoint.x && y === firstHeadPoint.y
@@ -125,7 +125,7 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
     fromJSON(json) {
       color = json[0];
       direction = json[1];
-      isAlive = json[2] === 1 ? true : false;
+      isAlive = Boolean(json[2]);
       const y = json[3][1];
       points = json[3][0].reduce((acc, x, index) => {
         acc.push({ x, y: y[index] });
@@ -150,10 +150,6 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
 }
 
 Snake.create = () => new Snake(getDefaultSnakeConfig());
-
-function comparePoints() {
-
-}
 
 function getDefaultSnakeConfig() {
   return {

@@ -79,10 +79,6 @@ function main() {
 
     [MESSAGE_GAME_START]: () => {
       game.start();
-      /*broadcast({
-        wsServer,
-        message: createGameStartMessage().serialize()
-      });*/
       broadcastStateUpdate();
     },
 
@@ -229,12 +225,6 @@ function createStateUpdatedMessage(state) {
     payload: {
       state
     }
-  });
-}
-
-function createGameStartMessage() {
-  return new Message({
-    type: MESSAGE_GAME_START
   });
 }
 

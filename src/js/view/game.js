@@ -26,25 +26,27 @@ export default function GameView(game) {
   }
 
   function paintMessages(context) {
-    if(!game.isRunning) {
-      const isAwaiting = game.isOver && !game.hasStarted;
-      const isPaused = !game.isOver && game.hasStarted;
-      const isGameOver = game.isOver && game.hasStarted;
+    if(game.isRunning) {
+      return;
+    }
 
-      if(isAwaiting) {
-        paintAwaitingMessage(context);
-      }
+    const isAwaiting = game.isOver && !game.hasStarted;
+    const isPaused = !game.isOver && game.hasStarted;
+    const isGameOver = game.isOver && game.hasStarted;
 
-      if(isGameOver) {
-        paintGameOverMessage(context);
-        if(game.winner) {
-          paintWinnerMessage(context);
-        }
-      }
+    if(isAwaiting) {
+      paintAwaitingMessage(context);
+    }
 
-      if(isPaused) {
-        paintPauseMessage(context);
+    if(isGameOver) {
+      paintGameOverMessage(context);
+      if(game.winner) {
+        paintWinnerMessage(context);
       }
+    }
+
+    if(isPaused) {
+      paintPauseMessage(context);
     }
   }
 

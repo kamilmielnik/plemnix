@@ -41,7 +41,7 @@ export default function Fruit({ id = nextId++, color, hasBeenEaten, point, size 
     fromJSON(json) {
       id = json[0];
       color = json[1];
-      hasBeenEaten = json[2] === 1 ? true : false;
+      hasBeenEaten = Boolean(json[2]);
       point = {
         x: json[3][0],
         y: json[3][1]
@@ -74,7 +74,7 @@ Fruit.create = () => {
 Fruit.fromJSON = (json) => new Fruit({
   id: json[0],
   color: json[1],
-  hasBeenEaten: json[2] === 1 ? true : false,
+  hasBeenEaten: Boolean(json[2]),
   point: {
     x: json[3][0],
     y: json[3][1]

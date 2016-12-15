@@ -138,9 +138,9 @@ export default function Game({ onAddFruit } = {}) {
       });
 
       players = updatedPlayers;
-      isOver = json[1] === 1 ? true : false;
-      isRunning = json[2] === 1 ? true : false;
-      hasStarted = json[3] === 1 ? true : false;
+      isOver = Boolean(json[1]);
+      isRunning = Boolean(json[2]);
+      hasStarted = Boolean(json[3]);
     },
 
     toJSON() {
@@ -229,7 +229,7 @@ export default function Game({ onAddFruit } = {}) {
   }
 
   function handleGameEnd() {
-  const wasRunning = isRunning;
+    const wasRunning = isRunning;
     const numberOfPlayers = Object.values(players).length;
     const numberOfAlivePlayers = Object.values(players).filter(({ isAlive }) => isAlive).length;
     const isEnoughPlayersAlive = [
@@ -245,9 +245,7 @@ export default function Game({ onAddFruit } = {}) {
     isRunning = isEnoughPlayersAlive && highestScore < WINNING_POINTS_TRESHOLD;
     isOver = !isRunning;
     const winner = getWinner();
-    if (wasRunning && !isRunning) {
-      debugger;
-    }
+
     if(isOver) {
       clearTimeout(addFruitTimeout);
     }

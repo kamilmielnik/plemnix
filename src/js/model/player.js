@@ -89,7 +89,7 @@ export default function Player({
     fromJSON(json) {
       id = json[0];
       name = json[1];
-      hasWon = json[2] === 1 ? true : false;
+      hasWon = Boolean(json[2]);
       ping = json[3];
       pressedKeys.fromJSON(json[4]);
       snake.fromJSON(json[5]);
