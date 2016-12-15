@@ -50,9 +50,16 @@ function main() {
       },
 
       [MESSAGE_FRUITS_UPDATED]: (ws, payload) => {
-        const [eatenFruitsIds, newFruits] = payload;
+        const [eatenFruitsIds, newFruits, snakesGrowth] = payload;
+        const growth = snakesGrowth.map((data) => ({
+          id: data[0],
+          pointsToAdd: data[1]
+        }));
         game.deleteFruits(eatenFruitsIds);
         game.addFruits(newFruits.map(Fruit.fromJSON));
+        growth.forEach(({ id, pointsToAdd }) => {
+          game.players[id].snake.pointsToAdd = pointsToAdd;
+        });
       },
 
       [MESSAGE_PLAYERS_INFO_UPDATED]: (ws, { players }) => {

@@ -28,6 +28,14 @@ export default function Snake({ color, direction = 0, isAlive = true, points = [
       return [...points];
     },
 
+    get pointsToAdd() {
+      return pointsToAdd;
+    },
+
+    set pointsToAdd(value) {
+      pointsToAdd = value;
+    },
+
     get score() {
       return points.length + pointsToAdd - INITIAL_SNAKE_LENGTH;
     },

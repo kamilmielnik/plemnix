@@ -119,11 +119,12 @@ function main() {
     game.stepServer();
     const eatenFruits = oldFruits.filter((fruit) => !game.fruits.includes(fruit));
     const newFruits = game.fruits.filter((fruit) => !oldFruits.includes(fruit));
+    const snakesGrowth = Object.values(game.players).map(({ id, snake }) => [id, snake.pointsToAdd]);
 
     if(eatenFruits.length || newFruits.length) {
       broadcast({
         wsServer,
-        message: createFruitsUpdatedMessage(eatenFruits, newFruits).serialize()
+        message: createFruitsUpdatedMessage(eatenFruits, newFruits, snakesGrowth).serialize()
       });
     }
   }, SNAKE_MOVE_TIME);
@@ -187,12 +188,13 @@ function createSignInResponseMessage(token, id) {
   });
 }
 
-function createFruitsUpdatedMessage(eatenFruits, newFruits) {
+function createFruitsUpdatedMessage(eatenFruits, newFruits, snakesGrowth = []) {
   return new Message({
     type: MESSAGE_FRUITS_UPDATED,
     payload: [
       eatenFruits.map(({ id }) => id),
-      newFruits.map((fruit) => fruit.toJSON())
+      newFruits.map((fruit) => fruit.toJSON()),
+      snakesGrowth
     ]
   });
 }
