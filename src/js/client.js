@@ -5,10 +5,10 @@ import { FIELD_HEIGHT, FIELD_WIDTH, SNAKE_MOVE_TIME } from 'constants';
 import { KeysListener } from 'utils';
 import {
   MESSAGE_PING, MESSAGE_CHAT,
-  MESSAGE_GAME_START,
   MESSAGE_GAME_STOP,
   MESSAGE_PLAYER_LEFT,
-  MESSAGE_FRUITS_UPDATED, MESSAGE_PLAYERS_INFO_UPDATED, MESSAGE_STATE_UPDATED
+  MESSAGE_FRUITS_UPDATED, MESSAGE_PLAYERS_INFO_UPDATED,
+  MESSAGE_SNAKES_UPDATED, MESSAGE_STATE_UPDATED
 } from 'api';
 import ApiClient from 'api/client';
 import { Chat, Fruit, Game } from 'model';
@@ -41,10 +41,6 @@ function main() {
         apiClient.pong();
       },
 
-      [MESSAGE_GAME_START]: () => {
-        game.startClient();
-      },
-
       [MESSAGE_GAME_STOP]: () => {
         game.stop();
       },
@@ -67,10 +63,16 @@ function main() {
         });
       },
 
-      [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
+      [MESSAGE_SNAKES_UPDATED]: (ws, payload) => {
         clearInterval(updateGameInterval);
-        game.fromJSON(state);
+        Object.keys(payload).forEach((id) => {
+          game.players[id].snake.fromLightJSON(payload[id]);
+        });
         updateGameInterval = setInterval(() => game.step(), SNAKE_MOVE_TIME);
+      },
+
+      [MESSAGE_STATE_UPDATED]: (ws, { state }) => {
+        game.fromJSON(state);
       }
     }
   });

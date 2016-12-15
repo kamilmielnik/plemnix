@@ -3,7 +3,8 @@ import { Server as WebSocketServer } from 'ws';
 import http from 'http';
 import {
   SERVER_PORT,
-  GAME_SYNC_TIME, PING_SYNC_TIME, PLAYER_INFO_SYNC_TIME, SNAKE_MOVE_TIME
+  GAME_SYNC_TIME, PING_SYNC_TIME, PLAYER_INFO_SYNC_TIME, SNAKES_SYNC_TIME,
+  SNAKE_MOVE_TIME
 } from './constants';
 import {
   Message,
@@ -12,7 +13,8 @@ import {
   MESSAGE_KEY_PRESSED, MESSAGE_KEY_RELEASED,
   MESSAGE_GAME_START, MESSAGE_GAME_STOP, MESSAGE_GAME_RESET,
   MESSAGE_PLAYER_LEFT,
-  MESSAGE_FRUITS_UPDATED, MESSAGE_PLAYERS_INFO_UPDATED, MESSAGE_STATE_UPDATED
+  MESSAGE_FRUITS_UPDATED, MESSAGE_PLAYERS_INFO_UPDATED,
+  MESSAGE_SNAKES_UPDATED, MESSAGE_STATE_UPDATED
 } from './api';
 import { Game, Player } from './model';
 
@@ -77,10 +79,11 @@ function main() {
 
     [MESSAGE_GAME_START]: () => {
       game.start();
-      broadcast({
+      /*broadcast({
         wsServer,
         message: createGameStartMessage().serialize()
-      });
+      });*/
+      broadcastStateUpdate();
     },
 
     [MESSAGE_GAME_STOP]: () => {
@@ -131,6 +134,7 @@ function main() {
 
   setInterval(broadcastStateUpdate, GAME_SYNC_TIME);
   setInterval(broadcastPlayersInfoUpdate, PLAYER_INFO_SYNC_TIME);
+  setInterval(broadcastSnakesUpdate, SNAKES_SYNC_TIME);
 
   function onAddFruit(fruit) {
     broadcast({
@@ -143,6 +147,13 @@ function main() {
     broadcast({
       wsServer,
       message: createPlayersInfoUpdatedMessage(game.players).serialize()
+    });
+  }
+
+  function broadcastSnakesUpdate() {
+    broadcast({
+      wsServer,
+      message: createSnakesUpdatedMessage(game).serialize()
     });
   }
 
@@ -199,6 +210,16 @@ function createPlayersInfoUpdatedMessage(players) {
         return payload;
       }, {})
     }
+  });
+}
+
+function createSnakesUpdatedMessage(game) {
+  return new Message({
+    type: MESSAGE_SNAKES_UPDATED,
+    payload: Object.values(game.players).reduce((payload, { id, snake }) => {
+      payload[id] = snake.toLightJSON();
+      return payload;
+    }, {})
   });
 }
 

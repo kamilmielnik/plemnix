@@ -23,6 +23,7 @@ export const GAME_SYNC_TIME = 10000;
 export const SNAKES_SYNC_TIME = 1000 / 12;
 export const PING_SYNC_TIME = 2500;
 export const PLAYER_INFO_SYNC_TIME = PING_SYNC_TIME;
+export const SNAKES_LIGHT_JSON_POINTS = 16;
 
 /* client-specific */
 export const FRUIT_COLOR = '#6acc1c';
