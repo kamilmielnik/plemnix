@@ -13,7 +13,7 @@ export default function Player({
   socket,
   token = generateToken()
 }) {
-  let lastPing = null;
+  let lastPingTimestamp = null;
 
   return {
     get id() {
@@ -73,11 +73,11 @@ export default function Player({
     },
 
     registerPing() {
-      lastPing = Number(new Date());
+      lastPingTimestamp = Number(new Date());
     },
 
     registerPong() {
-      ping = Number(new Date()) - lastPing;
+      ping = (Number(new Date()) - lastPingTimestamp) / 2;
     },
 
     reset() {
