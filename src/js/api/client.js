@@ -11,8 +11,6 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
   let token = null;
   let id = null;
   const handlers = {
-    ...customHandlers,
-
     [MESSAGE_SIGN_IN_RESPONSE]: (ws, { token: apiToken, id: playerId }) => {
       token = apiToken;
       id = playerId;
@@ -22,10 +20,15 @@ export default function ApiClient({ onOpen, customHandlers = {} }) {
   const ws = connect(onOpen, (message) => {
     const { type, payload } = message;
     const handler = handlers[type];
+    const customHandler = customHandlers[type];
     if(handler) {
       handler(ws, payload);
-    } else {
-      console.log(`no handler for "${type}"`);
+    }
+
+    if(Boolean(token)) {
+      if(customHandler) {
+        customHandler(ws, payload);
+      }
     }
   });
 

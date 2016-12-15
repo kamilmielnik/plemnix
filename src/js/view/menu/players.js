@@ -49,7 +49,7 @@ export default function PlayersView() {
   function createPingNode({ ping }) {
     const pingNode = document.createElement('div');
     pingNode.classList.add('ping');
-    pingNode.textContent = Number.isInteger(ping) ? ping : '?';
+    pingNode.textContent = (typeof ping === 'string') ? ping : (Number.isInteger(ping) ? ping : '?');
     return pingNode;
   }
 
