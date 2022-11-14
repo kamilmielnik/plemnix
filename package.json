@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "author": "",
   "license": "MIT",
+  "engines": {
+    "node": "=12"
+  },
   "keywords": [],
   "scripts": {
     "clean:build": "node ./bin/clean.js createdir",
@@ -34,7 +37,7 @@
     "jquery": "3.1.0",
     "jsdom": "8.2.0",
     "json-loader": "0.5.4",
-    "node-sass": "3.13.0",
+    "node-sass": "7.0.3",
     "postcss-loader": "0.13.0",
     "rimraf": "2.5.4",
     "sass-loader": "4.0.2",
